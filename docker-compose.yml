@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    image: php:8.1-apache
+    container_name: shine-festivals-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./dist:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    command: >
+      bash -c "docker-php-ext-install pdo pdo_mysql && apache2-foreground"
+
+  db:
+    image: mysql:8.0
+    container_name: shine-festivals-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shine_festivals
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
