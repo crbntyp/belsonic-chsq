@@ -1,8 +1,8 @@
 # Shine Festivals - Multi-Venue Festival Platform
 
 <p align="center">
-  <img src="src/belsonic-logo.png" alt="Belsonic" height="100" style="margin: 0 20px;" />
-  <img src="src/chsq-logo.png" alt="Custom House Square" height="100" style="margin: 0 20px;" />
+  <img src="src/belsonic-logo.png" alt="Belsonic" height="200" style="margin: 0 20px;" />
+  <img src="src/chsq-logo.png" alt="Custom House Square" height="200" style="margin: 0 20px;" />
 </p>
 
 A modern, database-driven festival management platform powering multiple music festival websites with shared infrastructure but venue-specific branding and content.
