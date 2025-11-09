@@ -1,4 +1,7 @@
 <?php
+// Load config to ensure .env variables are loaded
+require_once __DIR__ . '/../includes/config.php';
+
 // Fallback credentials must be set in .env file
 // These are used if the admin_users database table doesn't exist yet
 // Required: ADMIN_USERNAME and ADMIN_PASSWORD in .env
@@ -32,8 +35,6 @@ function requireLogin() {
 }
 
 function login($username, $password) {
-    require_once __DIR__ . '/../includes/config.php';
-
     try {
         $db = getDB();
 

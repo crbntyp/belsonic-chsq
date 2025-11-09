@@ -743,7 +743,7 @@ img {
 
 // Accessibility Page
 .map {
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 10px;
   border-radius: var(--border-radius);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -818,6 +818,46 @@ img {
 
   &.active {
     display: block;
+  }
+}
+
+.location-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  i {
+    font-size: 16px;
+    color: var(--venue-color-primary);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--venue-color-primary);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 

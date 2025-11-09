@@ -72,6 +72,41 @@ function extractListItems($html) {
     return $items;
 }
 
+// Function to extract links with text and href from WYSIWYG HTML content
+function extractLinks($html) {
+    if (empty($html)) {
+        return [];
+    }
+
+    $links = [];
+
+    // Use DOMDocument to parse HTML
+    $dom = new DOMDocument();
+    libxml_use_internal_errors(true); // Suppress HTML parsing warnings
+    $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+    libxml_clear_errors();
+
+    // Extract <a> elements
+    $anchors = $dom->getElementsByTagName('a');
+    foreach ($anchors as $anchor) {
+        $text = trim($anchor->textContent);
+        $href = $anchor->getAttribute('href');
+
+        if (!empty($text) && !empty($href)) {
+            $links[] = [
+                'text' => $text,
+                'href' => $href
+            ];
+        }
+    }
+
+    return $links;
+}
+
+// Initialize variables
+$pubsLinks = [];
+$accommodationLinks = [];
+
 // Generate dynamic map iframes for pubs and accommodation
 if ($venue) {
     $venueName = $venue['name'];
@@ -80,6 +115,7 @@ if ($venue) {
     // Check if custom pubs list exists
     if (!empty($venue['pubs_list'])) {
         $pubsList = extractListItems($venue['pubs_list']);
+        $pubsLinks = extractLinks($venue['pubs_list']);
 
         if (!empty($pubsList) && !empty($venue['google_maps_api_key'])) {
             // Use JavaScript API for multi-pin map
@@ -130,6 +166,7 @@ if ($venue) {
     // Check if custom accommodation list exists
     if (!empty($venue['accommodation_list'])) {
         $accommodationList = extractListItems($venue['accommodation_list']);
+        $accommodationLinks = extractLinks($venue['accommodation_list']);
 
         if (!empty($accommodationList) && !empty($venue['google_maps_api_key'])) {
             // Use JavaScript API for multi-pin map
@@ -354,6 +391,19 @@ window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds); ?>;
         </section>
         <?php endif; ?>
 
+        <!-- DEBUG: <?php echo 'pubsLinks count: ' . count($pubsLinks); ?> -->
+        <?php if (!empty($pubsLinks)): ?>
+        <section class="location-pills">
+            <?php foreach ($pubsLinks as $link): ?>
+                <a href="<?php echo htmlspecialchars($link['href']); ?>" target="_blank" rel="noopener noreferrer" class="location-pill">
+                    <i class="las la-beer"></i>
+                    <?php echo htmlspecialchars($link['text']); ?>
+                </a>
+            <?php endforeach; ?>
+        </section>
+        <?php else: ?>
+        <!-- DEBUG: No pubs links found. Raw data length: <?php echo strlen($venue['pubs_list'] ?? ''); ?> -->
+        <?php endif; ?>
     </div>
 
     <!-- Accommodation Tab -->
@@ -364,6 +414,19 @@ window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds); ?>;
         </section>
         <?php endif; ?>
 
+        <!-- DEBUG: <?php echo 'accommodationLinks count: ' . count($accommodationLinks); ?> -->
+        <?php if (!empty($accommodationLinks)): ?>
+        <section class="location-pills">
+            <?php foreach ($accommodationLinks as $link): ?>
+                <a href="<?php echo htmlspecialchars($link['href']); ?>" target="_blank" rel="noopener noreferrer" class="location-pill">
+                    <i class="las la-hotel"></i>
+                    <?php echo htmlspecialchars($link['text']); ?>
+                </a>
+            <?php endforeach; ?>
+        </section>
+        <?php else: ?>
+        <!-- DEBUG: No accommodation links found. Raw data length: <?php echo strlen($venue['accommodation_list'] ?? ''); ?> -->
+        <?php endif; ?>
     </div>
 </div>
 
