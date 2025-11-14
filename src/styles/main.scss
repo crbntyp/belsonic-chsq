@@ -127,7 +127,7 @@ img {
       letter-spacing: 2px;
       &:hover, &.active {
         color: white;
-        background: rgba(white, 0.1);
+        //background: rgba(white, 0.1);
       }
     }
   }
@@ -1824,7 +1824,7 @@ img {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
+    //background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
@@ -1842,10 +1842,11 @@ img {
 
   .mobile-menu-container {
     width: 300px;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(white, 0.1);
+    border: 1px solid rgba(white, 0.1);
     border-radius: 12px;
     padding: 20px;
-    animation: menuGlow 4s ease-in-out infinite;
+    //animation: menuGlow 4s ease-in-out infinite;
   }
 
   .mobile-menu-logo {
