@@ -17,8 +17,8 @@ if ($venue) {
     for ($i = 1; $i <= 5; $i++) {
         $bgImage = $venue['bg_image_' . $i];
         if (!empty($bgImage)) {
-            // Ensure path starts with / for absolute URL
-            $venueBackgrounds[] = (strpos($bgImage, '/') === 0) ? $bgImage : '/' . $bgImage;
+            // Apply base path for subdirectory deployments
+            $venueBackgrounds[] = asset_url($bgImage);
         }
     }
 }
@@ -49,6 +49,8 @@ include 'includes/header.php';
 <script>
 // Pass venue background images to JavaScript
 window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds); ?>;
+// Pass base path for subdirectory deployments
+window.basePath = '<?php echo BASE_PATH; ?>';
 </script>
 
 <div class="sub-container">

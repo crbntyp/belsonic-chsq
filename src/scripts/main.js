@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if (backgroundImages.length > 0) {
     // Load BackgroundRotator class from components
     const script = document.createElement('script');
-    script.src = '/scripts/components/background-rotator.js';
+    const basePath = window.basePath || '';
+    script.src = basePath + '/scripts/components/background-rotator.js';
     script.onload = function() {
       const rotator = new BackgroundRotator(backgroundImages, 8000, 2000);
       rotator.init();

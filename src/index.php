@@ -77,6 +77,8 @@ include 'includes/header.php';
 <script>
 // Pass venue background images to JavaScript
 window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds); ?>;
+// Pass base path for subdirectory deployments
+window.basePath = '<?php echo BASE_PATH; ?>';
 </script>
 
     <section class="lineup">
