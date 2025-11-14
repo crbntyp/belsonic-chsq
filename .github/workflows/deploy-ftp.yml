@@ -28,11 +28,20 @@ jobs:
       - name: Create production .env file
         run: |
           cat > dist/.env <<EOF
-          # Database Configuration
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_PASS=${{ secrets.DB_PASS }}
+          # Database Configuration - Development/Demo (localhost + carbontype.co)
+          LOCAL_DB_HOST=${{ secrets.LOCAL_DB_HOST }}
+          LOCAL_DB_NAME=${{ secrets.LOCAL_DB_NAME }}
+          LOCAL_DB_USER=${{ secrets.LOCAL_DB_USER }}
+          LOCAL_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
+
+          # Database Configuration - Production (client's live site - not used on carbontype.co)
+          # These would be configured separately on the client's server
+          PROD_DB_HOST=localhost
+          PROD_DB_NAME=client_db
+          PROD_DB_USER=client_user
+          PROD_DB_PASS=client_password
+
+          # Database Charset
           DB_CHARSET=utf8mb4
 
           # Application Settings

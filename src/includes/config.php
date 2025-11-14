@@ -49,17 +49,39 @@ date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Europe/London');
 
 /**
  * Database Configuration
- * All environments use the same remote database
+ * Localhost + carbontype.co use dev/demo database
+ * All other domains use production database
  */
 
-$dbHost = getenv('DB_HOST');
-$dbName = getenv('DB_NAME');
-$dbUser = getenv('DB_USER');
-$dbPass = getenv('DB_PASS');
+// Detect current domain
+$currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isDemoEnvironment = (
+    strpos($currentHost, 'localhost') !== false ||
+    strpos($currentHost, '127.0.0.1') !== false ||
+    strpos($currentHost, 'carbontype.co') !== false
+);
 
-if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
-    $currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    die('<h3>Environment Configuration Error</h3><p>Missing required DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
+// Set database credentials based on environment
+if ($isDemoEnvironment) {
+    // Development/Demo: localhost or carbontype.co
+    $dbHost = getenv('LOCAL_DB_HOST');
+    $dbName = getenv('LOCAL_DB_NAME');
+    $dbUser = getenv('LOCAL_DB_USER');
+    $dbPass = getenv('LOCAL_DB_PASS');
+
+    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
+        die('<h3>Environment Configuration Error</h3><p>Missing required LOCAL_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
+    }
+} else {
+    // Production: Client's live site
+    $dbHost = getenv('PROD_DB_HOST');
+    $dbName = getenv('PROD_DB_NAME');
+    $dbUser = getenv('PROD_DB_USER');
+    $dbPass = getenv('PROD_DB_PASS');
+
+    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
+        die('<h3>Environment Configuration Error</h3><p>Missing required PROD_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
+    }
 }
 
 define('DB_HOST', $dbHost);
