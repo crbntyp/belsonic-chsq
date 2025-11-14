@@ -48,13 +48,45 @@ date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Europe/London');
 
 /**
  * Database Configuration
- * Loaded from .env file
+ * Dynamically configured based on domain
  */
 
-define('DB_HOST', getenv('DB_HOST'));
-define('DB_NAME', getenv('DB_NAME'));
-define('DB_USER', getenv('DB_USER'));
-define('DB_PASS', getenv('DB_PASS'));
+// Detect current domain
+$currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isLocalhost = (strpos($currentHost, 'localhost') !== false || strpos($currentHost, '127.0.0.1') !== false);
+
+// Set database credentials based on domain
+if ($isLocalhost) {
+    // Development/Localhost: Use remote database
+    $dbHost = getenv('LOCAL_DB_HOST');
+    $dbName = getenv('LOCAL_DB_NAME');
+    $dbUser = getenv('LOCAL_DB_USER');
+    $dbPass = getenv('LOCAL_DB_PASS');
+
+    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
+        die('<h3>Environment Configuration Error</h3><p>Missing required LOCAL_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
+    }
+
+    define('DB_HOST', $dbHost);
+    define('DB_NAME', $dbName);
+    define('DB_USER', $dbUser);
+    define('DB_PASS', $dbPass);
+} else {
+    // Production: Use local database
+    $dbHost = getenv('PROD_DB_HOST');
+    $dbName = getenv('PROD_DB_NAME');
+    $dbUser = getenv('PROD_DB_USER');
+    $dbPass = getenv('PROD_DB_PASS');
+
+    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
+        die('<h3>Environment Configuration Error</h3><p>Missing required PROD_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
+    }
+
+    define('DB_HOST', $dbHost);
+    define('DB_NAME', $dbName);
+    define('DB_USER', $dbUser);
+    define('DB_PASS', $dbPass);
+}
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 
@@ -112,44 +144,46 @@ function getVenueIdByDomain($requestDomain) {
     // Normalize the request domain
     $normalizedDomain = normalizeDomain($requestDomain);
 
-    // Special case: localhost defaults to venue ID 6 (Jonnys Venue - dont delete me)
-    // BUT: If there's a test_venue_id in session (from venue switcher), use that instead
-    // Matches: localhost, 127.0.0.1, localhost:8080, etc.
-    if ($normalizedDomain === 'localhost' || $normalizedDomain === '127.0.0.1') {
-        // Check if venue switcher has set a specific venue
-        if (isset($_SESSION['test_venue_id'])) {
-            $cache[$requestDomain] = $_SESSION['test_venue_id'];
-            return $_SESSION['test_venue_id'];
-        }
-        // Otherwise, default to venue 6
-        $cache[$requestDomain] = 6;
-        return 6;
-    }
-
     try {
         $pdo = getDB();
 
-        // Query venues table for matching domain
-        // Check both primary domain and aliases
-        $stmt = $pdo->prepare("
-            SELECT id FROM venues
-            WHERE (
-                domain = :exact_domain
-                OR domain = :normalized_domain
-                OR FIND_IN_SET(:exact_domain2, REPLACE(domain_aliases, ' ', '')) > 0
-                OR FIND_IN_SET(:normalized_domain2, REPLACE(domain_aliases, ' ', '')) > 0
-            )
-            LIMIT 1
-        ");
+        // First, try with domain_aliases (newer schema)
+        try {
+            $stmt = $pdo->prepare("
+                SELECT id FROM venues
+                WHERE (
+                    domain = :exact_domain
+                    OR domain = :normalized_domain
+                    OR FIND_IN_SET(:exact_domain2, REPLACE(domain_aliases, ' ', '')) > 0
+                    OR FIND_IN_SET(:normalized_domain2, REPLACE(domain_aliases, ' ', '')) > 0
+                )
+                LIMIT 1
+            ");
 
-        $stmt->execute([
-            ':exact_domain' => $requestDomain,
-            ':normalized_domain' => $normalizedDomain,
-            ':exact_domain2' => $requestDomain,
-            ':normalized_domain2' => $normalizedDomain
-        ]);
+            $stmt->execute([
+                ':exact_domain' => $requestDomain,
+                ':normalized_domain' => $normalizedDomain,
+                ':exact_domain2' => $requestDomain,
+                ':normalized_domain2' => $normalizedDomain
+            ]);
 
-        $result = $stmt->fetch();
+            $result = $stmt->fetch();
+        } catch (PDOException $e) {
+            // domain_aliases column doesn't exist, try simpler query
+            error_log("domain_aliases column not found, using simple query: " . $e->getMessage());
+            $stmt = $pdo->prepare("
+                SELECT id FROM venues
+                WHERE domain = :exact_domain OR domain = :normalized_domain
+                LIMIT 1
+            ");
+
+            $stmt->execute([
+                ':exact_domain' => $requestDomain,
+                ':normalized_domain' => $normalizedDomain
+            ]);
+
+            $result = $stmt->fetch();
+        }
 
         if ($result) {
             $venueId = $result['id'];
@@ -159,6 +193,7 @@ function getVenueIdByDomain($requestDomain) {
             $stmt->execute();
             $result = $stmt->fetch();
             $venueId = $result ? $result['id'] : 2;
+            error_log("No venue match for domain '{$requestDomain}' (normalized: '{$normalizedDomain}'), defaulting to venue {$venueId}");
         }
 
         $cache[$requestDomain] = $venueId;
@@ -179,10 +214,10 @@ define('DEFAULT_VENUE_ID', $detectedVenueId);
 
 /**
  * Get current venue ID
- * Checks session for test override, otherwise uses default
+ * Returns venue based on domain matching from database
  */
 function getCurrentVenueId() {
-    return $_SESSION['test_venue_id'] ?? DEFAULT_VENUE_ID;
+    return DEFAULT_VENUE_ID;
 }
 
 /**

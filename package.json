@@ -20,6 +20,7 @@
     "serve": "php -S localhost:8080 -t dist",
     "serve:livereload": "node livereload-server.js",
     "dev": "npm run build && concurrently \"npm run watch:scss\" \"npm run watch:php\" \"npm run watch:admin-css\" \"npm run watch:js\" \"npm run watch:img\" \"npm run serve\" \"npm run serve:livereload\"",
+    "dev:docker": "npm run build && concurrently \"npm run watch:scss\" \"npm run watch:php\" \"npm run watch:admin-css\" \"npm run watch:js\" \"npm run watch:img\"",
     "docker:start": "./docker-dev.sh start",
     "docker:stop": "./docker-dev.sh stop",
     "docker:restart": "./docker-dev.sh restart",

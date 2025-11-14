@@ -41,7 +41,7 @@
 
         if (count($venues) > 1):
     ?>
-    <div class="venue-switcher">
+    <div class="venue-switcher" style="display: none;">
         <label for="venue-select">Test Venue:</label>
         <select id="venue-select" onchange="window.location.href='/switch-venue.php?venue_id=' + this.value">
             <?php foreach ($venues as $v): ?>

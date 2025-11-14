@@ -7,17 +7,43 @@ include 'includes/header.php';
 $db = getDB();
 $message = '';
 $messageType = '';
+$messageIsHtml = false;
 
 // Handle DELETE
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    try {
-        $db->prepare("DELETE FROM venues WHERE id = ?")->execute([$id]);
-        $message = 'Venue deleted successfully';
-        $messageType = 'success';
-    } catch (PDOException $e) {
-        $message = 'Error deleting venue: ' . $e->getMessage();
+    $confirmDeleteAll = isset($_GET['confirm_delete_all']) && $_GET['confirm_delete_all'] === '1';
+
+    // Check if venue has associated performances
+    $performanceCheck = $db->prepare("SELECT COUNT(*) as count FROM performances WHERE venue_id = ?");
+    $performanceCheck->execute([$id]);
+    $performanceCount = $performanceCheck->fetch()['count'];
+
+    if ($performanceCount > 0 && !$confirmDeleteAll) {
+        // Show warning with option to delete all
+        $message = "Cannot delete this venue. It has {$performanceCount} performance(s) associated with it. Please delete or reassign those performances first, or <a href='?delete={$id}&confirm_delete_all=1' onclick='return confirm(\"This will permanently delete the venue and all {$performanceCount} associated performance(s). This cannot be undone. Are you sure?\");' style='color: #dc3545; text-decoration: underline;'>delete venue and all performances</a>.";
         $messageType = 'error';
+        $messageIsHtml = true;
+    } else {
+        try {
+            // Delete associated performances first if confirmed
+            if ($performanceCount > 0 && $confirmDeleteAll) {
+                $db->prepare("DELETE FROM performances WHERE venue_id = ?")->execute([$id]);
+            }
+
+            // Delete the venue
+            $db->prepare("DELETE FROM venues WHERE id = ?")->execute([$id]);
+
+            if ($confirmDeleteAll && $performanceCount > 0) {
+                $message = "Venue and {$performanceCount} associated performance(s) deleted successfully";
+            } else {
+                $message = 'Venue deleted successfully';
+            }
+            $messageType = 'success';
+        } catch (PDOException $e) {
+            $message = 'Error deleting venue: ' . $e->getMessage();
+            $messageType = 'error';
+        }
     }
 }
 
@@ -103,8 +129,8 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
 
 <?php if ($message): ?>
     <div class="alert alert-<?php echo $messageType; ?>">
-        
-        <?php echo htmlspecialchars($message); ?>
+        <i class="las la-<?php echo $messageType === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+        <span><?php echo $messageIsHtml ? $message : htmlspecialchars($message); ?></span>
     </div>
 <?php endif; ?>
 
