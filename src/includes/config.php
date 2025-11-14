@@ -49,45 +49,23 @@ date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Europe/London');
 
 /**
  * Database Configuration
- * Dynamically configured based on domain
+ * All environments use the same remote database
  */
 
-// Detect current domain
-$currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$isLocalhost = (strpos($currentHost, 'localhost') !== false || strpos($currentHost, '127.0.0.1') !== false);
+$dbHost = getenv('DB_HOST');
+$dbName = getenv('DB_NAME');
+$dbUser = getenv('DB_USER');
+$dbPass = getenv('DB_PASS');
 
-// Set database credentials based on domain
-if ($isLocalhost) {
-    // Development/Localhost: Use remote database
-    $dbHost = getenv('LOCAL_DB_HOST');
-    $dbName = getenv('LOCAL_DB_NAME');
-    $dbUser = getenv('LOCAL_DB_USER');
-    $dbPass = getenv('LOCAL_DB_PASS');
-
-    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
-        die('<h3>Environment Configuration Error</h3><p>Missing required LOCAL_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
-    }
-
-    define('DB_HOST', $dbHost);
-    define('DB_NAME', $dbName);
-    define('DB_USER', $dbUser);
-    define('DB_PASS', $dbPass);
-} else {
-    // Production: Use local database
-    $dbHost = getenv('PROD_DB_HOST');
-    $dbName = getenv('PROD_DB_NAME');
-    $dbUser = getenv('PROD_DB_USER');
-    $dbPass = getenv('PROD_DB_PASS');
-
-    if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
-        die('<h3>Environment Configuration Error</h3><p>Missing required PROD_DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
-    }
-
-    define('DB_HOST', $dbHost);
-    define('DB_NAME', $dbName);
-    define('DB_USER', $dbUser);
-    define('DB_PASS', $dbPass);
+if (!$dbHost || !$dbName || !$dbUser || !$dbPass) {
+    $currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    die('<h3>Environment Configuration Error</h3><p>Missing required DB_* variables in .env file. Current host: ' . htmlspecialchars($currentHost) . '</p>');
 }
+
+define('DB_HOST', $dbHost);
+define('DB_NAME', $dbName);
+define('DB_USER', $dbUser);
+define('DB_PASS', $dbPass);
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 

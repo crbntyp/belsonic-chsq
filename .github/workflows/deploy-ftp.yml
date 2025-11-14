@@ -28,19 +28,11 @@ jobs:
       - name: Create production .env file
         run: |
           cat > dist/.env <<EOF
-          # Database Configuration - Localhost/Development
-          LOCAL_DB_HOST=${{ secrets.LOCAL_DB_HOST }}
-          LOCAL_DB_NAME=${{ secrets.LOCAL_DB_NAME }}
-          LOCAL_DB_USER=${{ secrets.LOCAL_DB_USER }}
-          LOCAL_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
-
-          # Database Configuration - Production
-          PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}
-          PROD_DB_NAME=${{ secrets.PROD_DB_NAME }}
-          PROD_DB_USER=${{ secrets.PROD_DB_USER }}
-          PROD_DB_PASS=${{ secrets.PROD_DB_PASS }}
-
-          # Database Charset
+          # Database Configuration
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASS=${{ secrets.DB_PASS }}
           DB_CHARSET=utf8mb4
 
           # Application Settings
@@ -48,7 +40,7 @@ jobs:
           APP_TIMEZONE=Europe/London
           DEFAULT_VENUE_ID=6
 
-          # Admin Authentication (Fallback if admin_users table doesn't exist)
+          # Admin Authentication
           ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
           ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
           EOF
