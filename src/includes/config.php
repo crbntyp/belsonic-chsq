@@ -93,8 +93,11 @@ define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 /**
  * Base Path Configuration
  * Detect if running in a subdirectory (e.g., /belsonic/)
+ * Strip /admin from path if present to get application root
  */
 $scriptPath = dirname($_SERVER['SCRIPT_NAME']);
+// Remove /admin from path if present (we want app root, not admin subdirectory)
+$scriptPath = preg_replace('#/admin$#', '', $scriptPath);
 $basePath = ($scriptPath === '/' || $scriptPath === '\\') ? '' : $scriptPath;
 define('BASE_PATH', $basePath);
 
