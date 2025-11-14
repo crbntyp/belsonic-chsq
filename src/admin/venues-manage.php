@@ -558,7 +558,7 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
                     <?php endif; ?>
 
                     <div class="show-actions">
-                        <a href="<?php echo admin_url('venues-manage.php?edit=<?php echo $venue['id']; ?>'); ?>" class="btn btn-icon btn-edit" title="Edit">
+                        <a href="<?php echo admin_url('venues-manage.php?edit=' . $venue['id']); ?>" class="btn btn-icon btn-edit" title="Edit">
                             <i class="las la-edit"></i>
                         </a>
                         <button class="btn btn-icon btn-delete"

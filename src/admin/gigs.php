@@ -450,7 +450,7 @@ foreach ($gigs as $gig) {
                     <?php endif; ?>
 
                     <div class="show-actions">
-                        <a href="<?php echo admin_url('gigs.php?edit=<?php echo $gig['id']; ?>'); ?>" class="btn btn-icon btn-edit" title="Edit">
+                        <a href="<?php echo admin_url('gigs.php?edit=' . $gig['id']); ?>" class="btn btn-icon btn-edit" title="Edit">
                             <i class="las la-edit"></i>
                         </a>
                         <button class="btn btn-icon btn-delete"

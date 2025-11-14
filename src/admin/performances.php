@@ -223,10 +223,10 @@ $festivals = $db->query("SELECT id, name, year FROM festivals ORDER BY start_dat
                             <?php endif; ?>
                         </td>
                         <td class="actions">
-                            <a href="<?php echo admin_url('performances.php?edit=<?php echo $perf['id']; ?>'); ?>" class="btn-icon" title="Edit">
+                            <a href="<?php echo admin_url('performances.php?edit=' . $perf['id']); ?>" class="btn-icon" title="Edit">
                                 <i class="las la-edit"></i>
                             </a>
-                            <a href="<?php echo admin_url('performances.php?delete=<?php echo $perf['id']; ?>'); ?>"
+                            <a href="<?php echo admin_url('performances.php?delete=' . $perf['id']); ?>"
                                class="btn-icon btn-danger"
                                title="Delete"
                                onclick="return confirm('Are you sure you want to delete this performance?');">

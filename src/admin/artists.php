@@ -239,10 +239,10 @@ $artists = $db->query("SELECT * FROM artists ORDER BY name ASC")->fetchAll();
                             <?php endif; ?>
                         </td>
                         <td class="actions">
-                            <a href="<?php echo admin_url('artists.php?edit=<?php echo $artist['id']; ?>'); ?>" class="btn-icon" title="Edit">
+                            <a href="<?php echo admin_url('artists.php?edit=' . $artist['id']); ?>" class="btn-icon" title="Edit">
                                 <i class="las la-edit"></i>
                             </a>
-                            <a href="<?php echo admin_url('artists.php?delete=<?php echo $artist['id']; ?>'); ?>"
+                            <a href="<?php echo admin_url('artists.php?delete=' . $artist['id']); ?>"
                                class="btn-icon btn-danger"
                                title="Delete"
                                onclick="return confirm('Are you sure you want to delete this artist?');">
