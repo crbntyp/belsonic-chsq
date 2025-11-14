@@ -80,6 +80,6 @@ jobs:
           mkdir -f belsonic
           cd belsonic
           lcd ./dist
-          mirror --reverse --verbose --ignore-time --no-perms --exclude .git/ --exclude node_modules/
+          mirror --reverse --verbose --only-newer --no-perms --exclude .git/ --exclude node_modules/
           bye
           EOF
