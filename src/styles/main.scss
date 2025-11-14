@@ -88,6 +88,10 @@ img {
     }
   }
 
+  .mobile-menu-overlay {
+    display: none;
+  }
+
   .nav-menu {
     display: flex;
     list-style: none;
@@ -97,10 +101,6 @@ img {
     flex-wrap: wrap;
     justify-content: center;
     text-transform: uppercase;
-
-    .mobile-menu-logo {
-      display: none;
-    }
 
     a {
       color: rgba(255, 255, 255, 0.85);
@@ -1797,61 +1797,56 @@ img {
     display: flex;
   }
 
-  .nav-menu {
+  .mobile-menu-overlay {
+    display: flex;
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    background: #000;
-    flex-direction: column;
-    justify-content: flex-start;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
     align-items: center;
-    padding: 20px;
-    gap: 0;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 1001;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-
-    // Blurred overlay backdrop
-    &::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
+    z-index: 1000;
 
     &.active {
       opacity: 1;
       visibility: visible;
-
-      &::before {
-        opacity: 1;
-      }
     }
+  }
 
-    .mobile-menu-logo {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 20px;
-      margin-bottom: 10px;
+  .mobile-menu-container {
+    width: 300px;
+    background: #000;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  }
 
-      img {
-        max-height: 60px;
-        width: auto;
-      }
+  .mobile-menu-logo {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 10px;
+
+    img {
+      max-height: 60px;
+      width: auto;
     }
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
     li {
       width: 100%;

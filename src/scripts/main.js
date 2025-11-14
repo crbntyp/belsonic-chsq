@@ -34,31 +34,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Burger Menu Toggle
   const burgerMenu = document.getElementById('burgerMenu');
-  const navMenu = document.getElementById('navMenu');
+  const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
-  if (burgerMenu && navMenu) {
+  if (burgerMenu && mobileMenuOverlay) {
     burgerMenu.addEventListener('click', function() {
       burgerMenu.classList.toggle('active');
-      navMenu.classList.toggle('active');
+      mobileMenuOverlay.classList.toggle('active');
     });
 
     // Close menu when clicking on a link
-    const navLinks = navMenu.querySelectorAll('a');
+    const navLinks = mobileMenuOverlay.querySelectorAll('a');
     navLinks.forEach(link => {
       link.addEventListener('click', function() {
         burgerMenu.classList.remove('active');
-        navMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
       });
     });
 
-    // Close menu when clicking outside
-    document.addEventListener('click', function(event) {
-      const isClickInsideNav = navMenu.contains(event.target);
-      const isClickOnBurger = burgerMenu.contains(event.target);
-
-      if (!isClickInsideNav && !isClickOnBurger && navMenu.classList.contains('active')) {
+    // Close menu when clicking on overlay (outside menu container)
+    mobileMenuOverlay.addEventListener('click', function(event) {
+      if (event.target === mobileMenuOverlay) {
         burgerMenu.classList.remove('active');
-        navMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
       }
     });
   }
