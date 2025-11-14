@@ -18,8 +18,8 @@ if (!isset($venueBackgrounds)) {
         for ($i = 1; $i <= 5; $i++) {
             $bgImage = $venue['bg_image_' . $i];
             if (!empty($bgImage)) {
-                // Ensure path starts with / for absolute URL
-                $venueBackgrounds[] = (strpos($bgImage, '/') === 0) ? $bgImage : '/' . $bgImage;
+                // Apply base path for subdirectory deployments
+                $venueBackgrounds[] = asset_url($bgImage);
             }
         }
     }
@@ -32,13 +32,13 @@ if (!isset($venueBackgrounds)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>Admin</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="stylesheet" href="/admin/admin.css">
+    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_url('admin/admin.css'); ?>">
     <script>
     // Pass venue background images to JavaScript
     window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds ?? []); ?>;
     </script>
-    <script src="/scripts/main.js" defer></script>
+    <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
 </head>
 <body class="admin-body">
     <!-- Background Rotator will be inserted by JavaScript -->
@@ -50,26 +50,26 @@ if (!isset($venueBackgrounds)) {
             </div>
 
             <nav class="admin-nav">
-                <a href="/admin/gigs.php" class="<?php echo $currentPage === 'gigs' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_PATH; ?>/admin/gigs.php" class="<?php echo $currentPage === 'gigs' ? 'active' : ''; ?>">
                     <i class="las la-calendar-alt"></i>
                     Gigs
                 </a>
-                <a href="/admin/venues-manage.php" class="<?php echo $currentPage === 'venues' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_PATH; ?>/admin/venues-manage.php" class="<?php echo $currentPage === 'venues' ? 'active' : ''; ?>">
                     <i class="las la-map-marker-alt"></i>
                     Venues
                 </a>
             </nav>
 
             <div class="sidebar-footer">
-                <a href="/" target="_blank">
+                <a href="<?php echo BASE_PATH . '/'; ?>" target="_blank">
                     <i class="las la-external-link-alt"></i>
                     View Website
                 </a>
-                <a href="/admin/profile.php" class="<?php echo $currentPage === 'profile' ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_PATH; ?>/admin/profile.php" class="<?php echo $currentPage === 'profile' ? 'active' : ''; ?>">
                     <i class="las la-user-circle"></i>
                     My Profile
                 </a>
-                <a href="/admin/logout.php">
+                <a href="<?php echo BASE_PATH; ?>/admin/logout.php">
                     <i class="las la-sign-out-alt"></i>
                     Logout
                 </a>

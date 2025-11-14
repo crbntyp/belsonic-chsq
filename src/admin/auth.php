@@ -29,7 +29,7 @@ function isLoggedIn() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: /admin/login.php');
+        header('Location: ' . BASE_PATH . '/admin/login.php');
         exit;
     }
 }
@@ -63,6 +63,6 @@ function login($username, $password) {
 
 function logout() {
     session_destroy();
-    header('Location: /admin/login.php');
+    header('Location: ' . BASE_PATH . '/admin/login.php');
     exit;
 }

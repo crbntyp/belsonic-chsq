@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if (login($username, $password)) {
-        header('Location: /admin/gigs.php');
+        header('Location: ' . BASE_PATH . '/admin/gigs.php');
         exit;
     } else {
         $error = 'Invalid username or password';
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // If already logged in, redirect to gigs
 if (isLoggedIn()) {
-    header('Location: /admin/gigs.php');
+    header('Location: ' . BASE_PATH . '/admin/gigs.php');
     exit;
 }
 ?>
@@ -29,8 +29,8 @@ if (isLoggedIn()) {
     <meta name="robots" content="noindex, nofollow" />
     <title>Admin Login</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="stylesheet" href="/admin/admin.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_url('admin/admin.css'); ?>?v=<?php echo time(); ?>">
 </head>
 <body class="admin-login">
     <div class="login-container">
@@ -71,7 +71,7 @@ if (isLoggedIn()) {
             </form>
 
             <div class="login-footer">
-                <a href="/">
+                <a href="<?php echo BASE_PATH . '/'; ?>">
                     <i class="las la-arrow-left"></i>
                     Back to Website
                 </a>
