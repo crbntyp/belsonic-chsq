@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Close menu when clicking on a link
-    const navLinks = mobileMenuOverlay.querySelectorAll('a');
-    navLinks.forEach(link => {
+    const mobileNavLinks = mobileMenuOverlay.querySelectorAll('.mobile-nav-menu a');
+    mobileNavLinks.forEach(link => {
       link.addEventListener('click', function() {
         burgerMenu.classList.remove('active');
         mobileMenuOverlay.classList.remove('active');

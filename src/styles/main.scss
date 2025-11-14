@@ -1864,6 +1864,10 @@ img {
   }
 
   .nav-menu {
+    display: none; // Hidden on mobile
+  }
+
+  .mobile-nav-menu {
     display: flex;
     flex-direction: column;
     list-style: none;
