@@ -35,6 +35,26 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
+// Keyframe Animations
+@keyframes menuGlow {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 0, 111, 0.4),
+                0 0 30px rgba(255, 0, 111, 0.2);
+  }
+  33% {
+    box-shadow: 0 0 20px rgba(255, 0, 111, 0.5),
+                0 0 40px rgba(255, 0, 111, 0.3);
+  }
+  66% {
+    box-shadow: 0 0 25px rgba(255, 0, 111, 0.6),
+                0 0 50px rgba(255, 0, 111, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(255, 0, 111, 0.4),
+                0 0 30px rgba(255, 0, 111, 0.2);
+  }
+}
+
 // Reset & Base
 * {
   margin: 0;
@@ -1798,7 +1818,6 @@ img {
   }
 
   .mobile-menu-overlay {
-    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -1822,10 +1841,10 @@ img {
 
   .mobile-menu-container {
     width: 300px;
-    background: #000;
+    background: rgba(0, 0, 0, 0.9);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    animation: menuGlow 4s ease-in-out infinite;
   }
 
   .mobile-menu-logo {
@@ -1864,6 +1883,7 @@ img {
       background: transparent;
       border: none;
       transition: all 0.3s ease;
+      color: var(--venue-color-primary);
 
       &:hover, &.active {
         background: rgba(255, 255, 255, 0.1);
