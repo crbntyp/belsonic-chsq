@@ -67,6 +67,9 @@
                 <span></span>
             </div>
             <ul class="nav-menu" id="navMenu">
+                <div class="mobile-menu-logo">
+                    <img src="<?php echo htmlspecialchars(asset_url($venueLogoUrl)); ?>" alt="<?php echo htmlspecialchars($venueName); ?>" style="height: <?php echo htmlspecialchars($venueLogoHeight); ?>;">
+                </div>
                 <li><a href="index.php" class="<?php echo ($currentPage == 'lineup') ? 'active' : ''; ?>">Lineups</a></li>
                 <li><a href="location.php" class="<?php echo ($currentPage == 'location') ? 'active' : ''; ?>">Location</a></li>
                 <li><a href="info.php" class="<?php echo ($currentPage == 'info') ? 'active' : ''; ?>">General Info & Age Restrictions</a></li>
