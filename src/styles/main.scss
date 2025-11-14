@@ -1764,11 +1764,6 @@ img {
   }
 }
 
-// Mobile Menu Overlay (hidden on desktop)
-.mobile-menu-overlay {
-  display: none;
-}
-
 // Burger Menu
 .burger-menu {
   display: none;
@@ -1802,52 +1797,34 @@ img {
   }
 }
 
-// Responsive
-@media (max-width: 1023px) {
-  .navbar {
-    position: relative;
+// Mobile Menu Container Styling
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
 
-    .nav-brand {
-      .logo {
-        height: 80px;
-      }
-    }
+  &.active {
+    opacity: 1;
+    visibility: visible;
   }
+}
 
-  .burger-menu {
-    display: flex;
-  }
-
-  .mobile-menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    //background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 1000;
-
-    &.active {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  .mobile-menu-container {
-    width: 300px;
-    background: rgba(white, 0.1);
-    border: 1px solid rgba(white, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    //animation: menuGlow 4s ease-in-out infinite;
-  }
+.mobile-menu-container {
+  width: 300px;
+  background: rgba(white, 0.1);
+  border: 1px solid rgba(white, 0.1);
+  border-radius: 12px;
+  padding: 20px;
 
   .mobile-menu-logo {
     display: block;
@@ -1861,10 +1838,6 @@ img {
       width: auto;
       height: auto;
     }
-  }
-
-  .nav-menu {
-    display: none; // Hidden on mobile
   }
 
   .mobile-nav-menu {
@@ -1903,6 +1876,27 @@ img {
         color: var(--venue-color-primary);
       }
     }
+  }
+}
+
+// Responsive
+@media (max-width: 1023px) {
+  .navbar {
+    position: relative;
+
+    .nav-brand {
+      .logo {
+        height: 80px;
+      }
+    }
+
+    .nav-menu {
+      display: none;
+    }
+  }
+
+  .burger-menu {
+    display: flex;
   }
 }
 
