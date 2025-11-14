@@ -18,7 +18,7 @@
     ?>
     <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' 2026'; ?> | Belfast's Premier Music Festival</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
     <style>
     /* Dynamic venue colors */
     :root {
@@ -26,7 +26,7 @@
         --venue-color-secondary: <?php echo $venueSecondaryColor; ?>;
     }
     </style>
-    <script src="scripts/main.js" defer></script>
+    <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
 </head>
 <body>
     <?php
@@ -59,7 +59,7 @@
     <main class="container">
         <nav class="navbar">
             <div class="nav-brand">
-                <img src="<?php echo htmlspecialchars($venueLogoUrl); ?>" alt="<?php echo htmlspecialchars($venueName); ?>" class="logo" style="height: <?php echo htmlspecialchars($venueLogoHeight); ?>;">
+                <img src="<?php echo htmlspecialchars(asset_url($venueLogoUrl)); ?>" alt="<?php echo htmlspecialchars($venueName); ?>" class="logo" style="height: <?php echo htmlspecialchars($venueLogoHeight); ?>;">
             </div>
             <div class="burger-menu" id="burgerMenu">
                 <span></span>

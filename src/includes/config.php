@@ -90,7 +90,22 @@ define('DB_USER', $dbUser);
 define('DB_PASS', $dbPass);
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
+/**
+ * Base Path Configuration
+ * Detect if running in a subdirectory (e.g., /belsonic/)
+ */
+$scriptPath = dirname($_SERVER['SCRIPT_NAME']);
+$basePath = ($scriptPath === '/' || $scriptPath === '\\') ? '' : $scriptPath;
+define('BASE_PATH', $basePath);
 
+/**
+ * Helper function to create proper URLs with base path
+ */
+function asset_url($path) {
+    // Remove leading slash if present
+    $path = ltrim($path, '/');
+    return BASE_PATH . '/' . $path;
+}
 
 /**
  * Venue Configuration

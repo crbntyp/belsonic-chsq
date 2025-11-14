@@ -18,8 +18,8 @@ if ($venue) {
     for ($i = 1; $i <= 5; $i++) {
         $bgImage = $venue['bg_image_' . $i] ?? null;
         if (!empty($bgImage)) {
-            // Ensure path starts with / for absolute URL
-            $venueBackgrounds[] = (strpos($bgImage, '/') === 0) ? $bgImage : '/' . $bgImage;
+            // Apply base path for subdirectory deployments
+            $venueBackgrounds[] = asset_url($bgImage);
         }
     }
 }
@@ -105,7 +105,7 @@ window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds); ?>;
                 <article class="show-card">
                         <?php if (!empty($mainAct['image_url'])): ?>
                             <div class="show-image">
-                                <img src="<?php echo htmlspecialchars($mainAct['image_url']); ?>"
+                                <img src="<?php echo htmlspecialchars(asset_url($mainAct['image_url'])); ?>"
                                      alt="<?php echo htmlspecialchars($mainAct['artist_name']); ?>">
                             </div>
                         <?php endif; ?>
