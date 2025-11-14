@@ -35,20 +35,6 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-// Keyframe Animations
-@keyframes menuGlow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 0, 111, 0.3),
-                0 0 20px rgba(255, 0, 111, 0.2),
-                0 0 30px rgba(255, 0, 111, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(255, 0, 111, 0.5),
-                0 0 30px rgba(255, 0, 111, 0.3),
-                0 0 45px rgba(255, 0, 111, 0.2);
-  }
-}
-
 // Reset & Base
 * {
   margin: 0;
@@ -1865,16 +1851,13 @@ img {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
-      animation: menuGlow 3s ease-in-out infinite;
 
       &:hover, &.active {
         background: rgba(255, 255, 255, 0.1);
         color: var(--venue-color-primary);
         border-color: var(--venue-color-primary);
         transform: translateY(-2px);
-        box-shadow: 0 0 20px rgba(255, 0, 111, 0.6),
-                    0 0 40px rgba(255, 0, 111, 0.4),
-                    0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
     }
   }
