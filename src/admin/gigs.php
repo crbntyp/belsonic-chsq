@@ -271,7 +271,7 @@ foreach ($gigs as $gig) {
                     <input type="file" id="artist_image" name="artist_image" accept="image/*" onchange="previewImage(this)">
                     <input type="hidden" id="image_url" name="image_url" value="<?php echo htmlspecialchars($editGig['image_url'] ?? ''); ?>">
                     <div id="image_preview" style="margin-top: 0.5rem; <?php echo !empty($editGig['image_url']) ? '' : 'display: none;'; ?>">
-                        <img id="preview_img" src="<?php echo htmlspecialchars($editGig['image_url'] ?? ''); ?>" style="max-width: 200px; border-radius: 8px; border: 2px solid #e5e7eb;">
+                        <img id="preview_img" src="<?php echo htmlspecialchars(asset_url($editGig['image_url'] ?? '')); ?>" style="max-width: 200px; border-radius: 8px; border: 2px solid #e5e7eb;">
                     </div>
                 </div>
 
@@ -413,7 +413,7 @@ foreach ($gigs as $gig) {
             <article class="show-card">
                 <?php if (!empty($gig['image_url'])): ?>
                     <div class="show-image">
-                        <img src="<?php echo htmlspecialchars($gig['image_url']); ?>"
+                        <img src="<?php echo htmlspecialchars(asset_url($gig['image_url'])); ?>"
                              alt="<?php echo htmlspecialchars($gig['artist_name']); ?>"
                              onerror="this.style.display='none';">
                     </div>
