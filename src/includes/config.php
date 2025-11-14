@@ -37,9 +37,10 @@ function loadEnv($path) {
 }
 
 // Load .env file - try multiple locations
-$envPath = __DIR__ . '/../../.env'; // Project root (e.g., when dist/includes/config.php)
+// Try closest location first (dist root) to avoid conflicts with parent site .env
+$envPath = __DIR__ . '/../.env'; // One level up (e.g., dist root when in dist/includes/)
 if (!file_exists($envPath)) {
-    $envPath = __DIR__ . '/../.env'; // Parent directory (e.g., when src/includes/config.php or dist root)
+    $envPath = __DIR__ . '/../../.env'; // Two levels up (e.g., project root)
 }
 loadEnv($envPath);
 
