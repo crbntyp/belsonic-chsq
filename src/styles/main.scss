@@ -127,7 +127,7 @@ img {
       letter-spacing: 2px;
       &:hover, &.active {
         color: white;
-        //background: rgba(white, 0.1);
+        background: rgba(white, 0.1);
       }
     }
   }
@@ -1856,24 +1856,20 @@ img {
     a {
       display: block;
       width: 100%;
-      padding: 15px 20px;
+      padding: 10px;
       font-size: 16px;
       text-align: center;
       border-radius: 8px;
       background: transparent;
       border: none;
       transition: all 0.3s ease;
-      color: var(--venue-color-primary);
+      color: white;
+      margin-bottom: 5px;
+      
 
-      &:hover {
+
+      &.active, &:hover {
         background: rgba(255, 255, 255, 0.1);
-        color: var(--venue-color-primary);
-      }
-
-      &.active {
-        background: transparent;
-        border: 1px solid var(--venue-color-primary);
-        color: var(--venue-color-primary);
       }
     }
   }
