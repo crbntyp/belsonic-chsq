@@ -843,8 +843,8 @@ function renderBackgroundImages() {
     backgroundImages.forEach((imageUrl, index) => {
         const item = document.createElement('div');
         item.className = 'bg-image-item';
-        // Ensure path starts with / for proper display
-        const imagePath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+        // Prepend base path for subdirectory deployments
+        const imagePath = imageUrl.startsWith('http') ? imageUrl : window.basePath + '/' + imageUrl.replace(/^\/+/, '');
         item.innerHTML = `
             <img src="${imagePath}" alt="Background ${index + 1}">
             <div class="bg-image-overlay">

@@ -39,6 +39,8 @@ if (!isset($venueBackgrounds)) {
     window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds ?? []); ?>;
     // Pass base path for admin URLs
     window.adminBasePath = '<?php echo admin_url(''); ?>';
+    // Pass base path for asset URLs
+    window.basePath = '<?php echo BASE_PATH; ?>';
     </script>
     <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
 </head>
