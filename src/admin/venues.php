@@ -276,7 +276,7 @@ function deleteBackgroundImage(index) {
 
 function deleteVenue(id, name) {
     if (confirm('Are you sure you want to delete ' + name + '?')) {
-        window.location.href = '/admin/venues.php?delete=' + id;
+        window.location.href = window.adminBasePath + 'venues.php?delete=' + id;
     }
 }
 

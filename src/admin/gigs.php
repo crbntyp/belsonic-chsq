@@ -379,7 +379,7 @@ foreach ($gigs as $gig) {
                     <i class="las la-save"></i>
                     <?php echo $editGig ? 'Update' : 'Save'; ?> Gig
                 </button>
-                <a href="/admin/gigs.php" class="btn btn-secondary">
+                <a href="<?php echo admin_url('gigs.php'); ?>" class="btn btn-secondary">
                     Cancel
                 </a>
             </div>
@@ -387,7 +387,7 @@ foreach ($gigs as $gig) {
     </div>
 <?php else: ?>
     <div class="page-actions">
-        <a href="/admin/gigs.php?add=1" class="btn btn-primary">
+        <a href="<?php echo admin_url('gigs.php?add=1'); ?>" class="btn btn-primary">
             Add New Gig
         </a>
     </div>
@@ -450,7 +450,7 @@ foreach ($gigs as $gig) {
                     <?php endif; ?>
 
                     <div class="show-actions">
-                        <a href="/admin/gigs.php?edit=<?php echo $gig['id']; ?>" class="btn btn-icon btn-edit" title="Edit">
+                        <a href="<?php echo admin_url('gigs.php?edit=<?php echo $gig['id']; ?>'); ?>" class="btn btn-icon btn-edit" title="Edit">
                             <i class="las la-edit"></i>
                         </a>
                         <button class="btn btn-icon btn-delete"
@@ -574,7 +574,7 @@ function toggleTicketUrl() {
 
 function deleteGig(id, name) {
     if (confirm('Are you sure you want to delete the gig for ' + name + '? This will also remove the artist.')) {
-        window.location.href = '/admin/gigs.php?delete=' + id;
+        window.location.href = window.adminBasePath + 'gigs.php?delete=' + id;
     }
 }
 

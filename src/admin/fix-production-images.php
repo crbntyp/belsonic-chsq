@@ -151,7 +151,7 @@ $venues = $db->query("SELECT id, name, logo_url FROM venues")->fetchAll();
             <i class="las la-wrench"></i>
             Fix All Image Paths
         </button>
-        <a href="/admin/index.php" class="btn btn-secondary">
+        <a href="<?php echo admin_url('index.php'); ?>" class="btn btn-secondary">
             Cancel
         </a>
     </form>

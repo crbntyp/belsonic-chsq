@@ -526,7 +526,7 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
                     <i class="las la-save"></i>
                     <?php echo $editVenue ? 'Update' : 'Save'; ?> Venue
                 </button>
-                <a href="/admin/venues-manage.php" class="btn btn-secondary">
+                <a href="<?php echo admin_url('venues-manage.php'); ?>" class="btn btn-secondary">
                     Cancel
                 </a>
             </div>
@@ -534,7 +534,7 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
     </div>
 <?php else: ?>
     <div class="page-actions">
-        <a href="/admin/venues-manage.php?add=1" class="btn btn-primary">
+        <a href="<?php echo admin_url('venues-manage.php?add=1'); ?>" class="btn btn-primary">
             Add New Venue
         </a>
     </div>
@@ -558,7 +558,7 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
                     <?php endif; ?>
 
                     <div class="show-actions">
-                        <a href="/admin/venues-manage.php?edit=<?php echo $venue['id']; ?>" class="btn btn-icon btn-edit" title="Edit">
+                        <a href="<?php echo admin_url('venues-manage.php?edit=<?php echo $venue['id']; ?>'); ?>" class="btn btn-icon btn-edit" title="Edit">
                             <i class="las la-edit"></i>
                         </a>
                         <button class="btn btn-icon btn-delete"
@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function deleteVenue(id, name) {
     if (confirm('Are you sure you want to delete the venue "' + name + '"?')) {
-        window.location.href = '/admin/venues-manage.php?delete=' + id;
+        window.location.href = window.adminBasePath + 'venues-manage.php?delete=' + id;
     }
 }
 
@@ -803,7 +803,7 @@ function uploadFile(file) {
 
     formData.append('venue_id', venueId);
 
-    fetch('/admin/upload-background.php', {
+    fetch(window.adminBasePath + 'upload-background.php', {
         method: 'POST',
         body: formData
     })
@@ -877,7 +877,7 @@ function deleteBackgroundImage(index) {
     }
 
     // Send delete request to server
-    fetch('/admin/delete-background.php', {
+    fetch(window.adminBasePath + 'delete-background.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

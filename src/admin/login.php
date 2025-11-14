@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if (login($username, $password)) {
-        header('Location: ' . BASE_PATH . '/admin/gigs.php');
+        header('Location: ' . admin_url('gigs.php'));
         exit;
     } else {
         $error = 'Invalid username or password';
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // If already logged in, redirect to gigs
 if (isLoggedIn()) {
-    header('Location: ' . BASE_PATH . '/admin/gigs.php');
+    header('Location: ' . admin_url('gigs.php'));
     exit;
 }
 ?>

@@ -181,7 +181,7 @@ $festivals = $db->query("SELECT id, name, year FROM festivals ORDER BY start_dat
                 <button type="submit" class="btn btn-primary">
                     <?php echo $editPerformance ? 'Update' : 'Add'; ?> Performance
                 </button>
-                <a href="/admin/performances.php" class="btn btn-secondary">
+                <a href="<?php echo admin_url('performances.php'); ?>" class="btn btn-secondary">
                     Cancel
                 </a>
             </div>
@@ -189,7 +189,7 @@ $festivals = $db->query("SELECT id, name, year FROM festivals ORDER BY start_dat
     </div>
 <?php else: ?>
     <div class="page-actions">
-        <a href="/admin/performances.php?add=1" class="btn btn-primary">
+        <a href="<?php echo admin_url('performances.php?add=1'); ?>" class="btn btn-primary">
             Add New Performance
         </a>
     </div>
@@ -223,10 +223,10 @@ $festivals = $db->query("SELECT id, name, year FROM festivals ORDER BY start_dat
                             <?php endif; ?>
                         </td>
                         <td class="actions">
-                            <a href="/admin/performances.php?edit=<?php echo $perf['id']; ?>" class="btn-icon" title="Edit">
+                            <a href="<?php echo admin_url('performances.php?edit=<?php echo $perf['id']; ?>'); ?>" class="btn-icon" title="Edit">
                                 <i class="las la-edit"></i>
                             </a>
-                            <a href="/admin/performances.php?delete=<?php echo $perf['id']; ?>"
+                            <a href="<?php echo admin_url('performances.php?delete=<?php echo $perf['id']; ?>'); ?>"
                                class="btn-icon btn-danger"
                                title="Delete"
                                onclick="return confirm('Are you sure you want to delete this performance?');">

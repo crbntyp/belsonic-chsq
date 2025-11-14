@@ -111,6 +111,15 @@ function asset_url($path) {
 }
 
 /**
+ * Helper function for admin URLs with base path
+ */
+function admin_url($path = '') {
+    // Remove leading slash if present
+    $path = ltrim($path, '/');
+    return BASE_PATH . '/admin/' . $path;
+}
+
+/**
  * Venue Configuration
  * Dynamically detects venue based on domain from database
  */

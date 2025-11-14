@@ -197,7 +197,7 @@ $artists = $db->query("SELECT * FROM artists ORDER BY name ASC")->fetchAll();
                 <button type="submit" class="btn btn-primary">
                     <?php echo $editArtist ? 'Update' : 'Add'; ?> Artist
                 </button>
-                <a href="/admin/artists.php" class="btn btn-secondary">
+                <a href="<?php echo admin_url('artists.php'); ?>" class="btn btn-secondary">
                     Cancel
                 </a>
             </div>
@@ -205,7 +205,7 @@ $artists = $db->query("SELECT * FROM artists ORDER BY name ASC")->fetchAll();
     </div>
 <?php else: ?>
     <div class="page-actions">
-        <a href="/admin/artists.php?add=1" class="btn btn-primary">
+        <a href="<?php echo admin_url('artists.php?add=1'); ?>" class="btn btn-primary">
             Add New Artist
         </a>
     </div>
@@ -239,10 +239,10 @@ $artists = $db->query("SELECT * FROM artists ORDER BY name ASC")->fetchAll();
                             <?php endif; ?>
                         </td>
                         <td class="actions">
-                            <a href="/admin/artists.php?edit=<?php echo $artist['id']; ?>" class="btn-icon" title="Edit">
+                            <a href="<?php echo admin_url('artists.php?edit=<?php echo $artist['id']; ?>'); ?>" class="btn-icon" title="Edit">
                                 <i class="las la-edit"></i>
                             </a>
-                            <a href="/admin/artists.php?delete=<?php echo $artist['id']; ?>"
+                            <a href="<?php echo admin_url('artists.php?delete=<?php echo $artist['id']; ?>'); ?>"
                                class="btn-icon btn-danger"
                                title="Delete"
                                onclick="return confirm('Are you sure you want to delete this artist?');">

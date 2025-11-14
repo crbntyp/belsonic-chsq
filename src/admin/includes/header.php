@@ -37,6 +37,8 @@ if (!isset($venueBackgrounds)) {
     <script>
     // Pass venue background images to JavaScript
     window.venueBackgroundImages = <?php echo json_encode($venueBackgrounds ?? []); ?>;
+    // Pass base path for admin URLs
+    window.adminBasePath = '<?php echo admin_url(''); ?>';
     </script>
     <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
 </head>
@@ -50,11 +52,11 @@ if (!isset($venueBackgrounds)) {
             </div>
 
             <nav class="admin-nav">
-                <a href="<?php echo BASE_PATH; ?>/admin/gigs.php" class="<?php echo $currentPage === 'gigs' ? 'active' : ''; ?>">
+                <a href="<?php echo admin_url('gigs.php'); ?>" class="<?php echo $currentPage === 'gigs' ? 'active' : ''; ?>">
                     <i class="las la-calendar-alt"></i>
                     Gigs
                 </a>
-                <a href="<?php echo BASE_PATH; ?>/admin/venues-manage.php" class="<?php echo $currentPage === 'venues' ? 'active' : ''; ?>">
+                <a href="<?php echo admin_url('venues-manage.php'); ?>" class="<?php echo $currentPage === 'venues' ? 'active' : ''; ?>">
                     <i class="las la-map-marker-alt"></i>
                     Venues
                 </a>
@@ -65,11 +67,11 @@ if (!isset($venueBackgrounds)) {
                     <i class="las la-external-link-alt"></i>
                     View Website
                 </a>
-                <a href="<?php echo BASE_PATH; ?>/admin/profile.php" class="<?php echo $currentPage === 'profile' ? 'active' : ''; ?>">
+                <a href="<?php echo admin_url('profile.php'); ?>" class="<?php echo $currentPage === 'profile' ? 'active' : ''; ?>">
                     <i class="las la-user-circle"></i>
                     My Profile
                 </a>
-                <a href="<?php echo BASE_PATH; ?>/admin/logout.php">
+                <a href="<?php echo admin_url('logout.php'); ?>">
                     <i class="las la-sign-out-alt"></i>
                     Logout
                 </a>
