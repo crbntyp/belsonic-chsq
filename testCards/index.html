@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Deck Animation Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Controls -->
+    <div class="nav-arrows">
+        <button class="nav-arrow nav-arrow-up" aria-label="Previous slide">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+        </button>
+        <button class="nav-arrow nav-arrow-down" aria-label="Next slide">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-rail">
+        <div class="progress-dot" data-slide="0"></div>
+        <div class="progress-dot" data-slide="1"></div>
+        <div class="progress-dot" data-slide="2"></div>
+        <div class="progress-dot" data-slide="3"></div>
+        <div class="progress-dot" data-slide="4"></div>
+    </div>
+
+    <!-- Card Deck Container -->
+    <div class="deck-container">
+        <!-- Slide 1 -->
+        <div class="card-slide" data-index="0" style="background: firebrick">
+            <div class="card-inner">
+                <h1>crbntyp</h1>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="card-slide" data-index="1">
+            <div class="card-inner">
+                <h2>With 100+ projects of collective experience</h2>
+                <h3>Specialized in</h3>
+                <div class="columns">
+                    <div class="column">
+                        <h4>DEVELOPMENT</h4>
+                        <ul>
+                            <li>Architecture planning</li>
+                            <li>Web & mobile development</li>
+                            <li>API & CMS development</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h4>STRATEGY</h4>
+                        <ul>
+                            <li>Product Consulting</li>
+                            <li>Idea Validation</li>
+                            <li>Business Strategy</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h4>PRODUCT DESIGN</h4>
+                        <ul>
+                            <li>User Research</li>
+                            <li>UX Design</li>
+                            <li>UI Design</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h4>VISUAL DESIGN</h4>
+                        <ul>
+                            <li>Brand Design</li>
+                            <li>Illustration</li>
+                            <li>Motion design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="card-slide" data-index="2">
+            <div class="card-inner">
+                <h2>Our most talked about work</h2>
+                <div class="project-list">
+                    <div class="project-item">
+                        <span class="project-number">01</span>
+                        <span class="project-name">World app</span>
+                    </div>
+                    <div class="project-item">
+                        <span class="project-number">02</span>
+                        <span class="project-name">World.org</span>
+                    </div>
+                    <div class="project-item">
+                        <span class="project-number">03</span>
+                        <span class="project-name">Jellybean</span>
+                    </div>
+                    <div class="project-item">
+                        <span class="project-number">04</span>
+                        <span class="project-name">Noila</span>
+                    </div>
+                    <div class="project-item">
+                        <span class="project-number">05</span>
+                        <span class="project-name">Final Offer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="card-slide" data-index="3">
+            <div class="card-inner">
+                <h2>Project Details</h2>
+                <p class="project-description">Developing a global proof of human and finance network with 33M+ users</p>
+                <button class="cta-button">VIEW PROJECT</button>
+            </div>
+        </div>
+
+        <!-- Slide 5 - Space Invaders Game -->
+        <div class="card-slide" data-index="4" style="background: black;">
+            <div class="card-inner">
+                <div class="game-container">
+                    <div class="game-header">
+                        <h2>SPACE INVADERS</h2>
+                        <div class="game-stats">
+                            <span class="score">SCORE: <strong id="score">0</strong></span>
+                            <span class="lives">LIVES: <strong id="lives">3</strong></span>
+                        </div>
+                    </div>
+                    <canvas id="gameCanvas" width="800" height="600"></canvas>
+                    <div class="game-controls">
+                        <p><strong>CONTROLS:</strong> ← → Arrow Keys to Move | SPACE to Shoot</p>
+                        <button id="startButton" class="game-button">START GAME</button>
+                        <button id="restartButton" class="game-button" style="display: none;">RESTART</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Spacer (creates scrollable space) -->
+    <div class="scroll-spacer"></div>
+
+    <script src="script.js"></script>
+    <script src="space-invaders.js"></script>
+</body>
+</html>
