@@ -33,13 +33,13 @@ jobs:
           LOCAL_DB_HOST=localhost
           LOCAL_DB_NAME=shine_festivals
           LOCAL_DB_USER=shine_user
-          LOCAL_DB_PASS=${{ secrets.DB_PASSWORD }}
+          LOCAL_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
 
           # Database Configuration - Production (crbntyp.com)
           PROD_DB_HOST=localhost
           PROD_DB_NAME=shine_festivals
           PROD_DB_USER=shine_user
-          PROD_DB_PASS=${{ secrets.DB_PASSWORD }}
+          PROD_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
 
           # Database Charset
           DB_CHARSET=utf8mb4
