@@ -77,3 +77,4 @@ database/config.php
 # Temporary files
 *.tmp
 *.temp
+.env

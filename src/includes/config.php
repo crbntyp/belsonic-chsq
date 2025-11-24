@@ -58,7 +58,8 @@ $currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $isDemoEnvironment = (
     strpos($currentHost, 'localhost') !== false ||
     strpos($currentHost, '127.0.0.1') !== false ||
-    strpos($currentHost, 'carbontype.co') !== false
+    strpos($currentHost, 'carbontype.co') !== false ||
+    strpos($currentHost, 'crbntyp.com') !== false
 );
 
 // Set database credentials based on environment

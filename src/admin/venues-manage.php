@@ -410,7 +410,7 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
                     <input type="hidden" id="logo_url" name="logo_url" value="<?php echo htmlspecialchars($editVenue['logo_url'] ?? ''); ?>">
                     <?php if (!empty($editVenue['logo_url'])): ?>
                     <div id="logo_preview" style="margin-top: 0.5rem;">
-                        <img id="preview_logo" src="<?php echo htmlspecialchars($editVenue['logo_url']); ?>" style="max-width: 200px; max-height: 100px; padding: 10px; border-radius: 8px;">
+                        <img id="preview_logo" src="<?php echo htmlspecialchars(asset_url($editVenue['logo_url'])); ?>" style="max-width: 200px; max-height: 100px; padding: 10px; border-radius: 8px;">
                     </div>
                     <?php else: ?>
                     <div id="logo_preview" style="margin-top: 0.5rem; display: none;">

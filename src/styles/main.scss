@@ -1,6 +1,16 @@
 // Google Font Import
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
 
+// Britanica Font (for crbntyp logo)
+@font-face {
+  font-family: "Britanica";
+  src: url("../fonts/britanica-extra-bold.woff2") format("woff2"),
+       url("../fonts/britanica-extra-bold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 // CSS Variables - Festival Theme
 :root {
   // Venue-specific colors (dynamically set per venue)
@@ -663,6 +673,30 @@ img {
   p {
     color: rgba(255, 255, 255, 0.6);
     margin: 0;
+  }
+
+  .app-credit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    .app-credit-logo {
+      font-family: "Britanica", Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      clip-path: inset(0 0 44% 0);
+      line-height: 1;
+      margin-bottom: -10px;
+      letter-spacing: 0.5px;
+    }
   }
 }
 

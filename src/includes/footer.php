@@ -14,6 +14,9 @@
             </div>
             <?php include __DIR__ . '/social-links.php'; ?>
             <p>&copy; 2026 <?php echo htmlspecialchars($venueName ?? 'Festival'); ?>. All rights reserved.</p>
+            <div class="app-credit">
+                <span class="app-credit-logo">crbntyp</span>
+            </div>
         </div>
     </footer>
     <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
