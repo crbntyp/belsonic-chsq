@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="Summer Series Belfast">
     <meta property="og:description" content="Summer Series Belfast, world class events and gigs at CHSQ">
-    <meta property="og:image" content="https://www.summerseriesbelfast.com/img/assests/og-ssb.jpg">
+    <meta property="og:image" content="https://www.summerseriesbelfast.com/img/assets/og-ssb.jpg">
     <meta property="og:url" content="https://www.summerseriesbelfast.com">
     <meta property="og:type" content="website">
     <?php
