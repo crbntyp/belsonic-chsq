@@ -1,25 +1,35 @@
+<?php
+// Get current venue for dynamic title, colors, logo, and OG meta
+$currentVenueId = getCurrentVenueId();
+$currentVenueStmt = $db->prepare("SELECT name, domain, primary_color, secondary_color, logo_url, logo_height FROM venues WHERE id = ?");
+$currentVenueStmt->execute([$currentVenueId]);
+$currentVenue = $currentVenueStmt->fetch();
+$venueName = $currentVenue['name'] ?? 'Festival';
+$venueDomain = $currentVenue['domain'] ?? 'belsonic.com';
+$venuePrimaryColor = $currentVenue['primary_color'] ?? '#ff006f';
+$venueSecondaryColor = $currentVenue['secondary_color'] ?? '#00ffff';
+$venueLogoUrl = $currentVenue['logo_url'] ?? '/img/assets/logo.svg';
+$venueLogoHeight = $currentVenue['logo_height'] ?? '60px';
+
+// Create URL-safe slug from venue name for og:image filename
+$venueSlug = strtolower($venueName);
+$venueSlug = preg_replace('/[\'"]/', '', $venueSlug);
+$venueSlug = preg_replace('/[^a-z0-9]+/', '-', $venueSlug);
+$venueSlug = trim($venueSlug, '-');
+
+// Clean domain (remove trailing slash, ensure no protocol)
+$venueDomainClean = rtrim(preg_replace('/^https?:\/\//', '', $venueDomain), '/');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="Summer Series Belfast">
-    <meta property="og:description" content="Summer Series Belfast, world class events and gigs at CHSQ">
-    <meta property="og:image" content="https://www.summerseriesbelfast.com/img/assets/og-ssb.jpg">
-    <meta property="og:url" content="https://www.summerseriesbelfast.com">
+    <meta property="og:title" content="<?php echo htmlspecialchars($venueName); ?>">
+    <meta property="og:description" content="World class events and gigs at <?php echo htmlspecialchars($venueName); ?>">
+    <meta property="og:image" content="https://<?php echo htmlspecialchars($venueDomainClean); ?>/img/assets/og-<?php echo $venueSlug; ?>.jpg">
+    <meta property="og:url" content="https://<?php echo htmlspecialchars($venueDomainClean); ?>">
     <meta property="og:type" content="website">
-    <?php
-    // Get current venue for dynamic title, colors, and logo
-    $currentVenueId = getCurrentVenueId();
-    $currentVenueStmt = $db->prepare("SELECT name, primary_color, secondary_color, logo_url, logo_height FROM venues WHERE id = ?");
-    $currentVenueStmt->execute([$currentVenueId]);
-    $currentVenue = $currentVenueStmt->fetch();
-    $venueName = $currentVenue['name'] ?? 'Festival';
-    $venuePrimaryColor = $currentVenue['primary_color'] ?? '#ff006f';
-    $venueSecondaryColor = $currentVenue['secondary_color'] ?? '#00ffff';
-    $venueLogoUrl = $currentVenue['logo_url'] ?? '/img/assets/logo.svg';
-    $venueLogoHeight = $currentVenue['logo_height'] ?? '60px';
-    ?>
     <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' 2026'; ?> | Belfast's Premier Music Festival</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
