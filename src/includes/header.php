@@ -27,8 +27,8 @@ $venueDomainClean = rtrim(preg_replace('/^https?:\/\//', '', $venueDomain), '/')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="<?php echo htmlspecialchars($venueName); ?>">
     <meta property="og:description" content="World class events and gigs at <?php echo htmlspecialchars($venueName); ?>">
-    <meta property="og:image" content="https://<?php echo htmlspecialchars($venueDomainClean); ?>/img/assets/og-<?php echo $venueSlug; ?>.jpg">
-    <meta property="og:url" content="https://<?php echo htmlspecialchars($venueDomainClean); ?>">
+    <meta property="og:image" content="https://<?php echo htmlspecialchars($venueDomainClean); ?><?php echo BASE_PATH; ?>/img/assets/og-<?php echo $venueSlug; ?>.jpg">
+    <meta property="og:url" content="https://<?php echo htmlspecialchars($venueDomainClean); ?><?php echo BASE_PATH; ?>">
     <meta property="og:type" content="website">
     <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' 2026'; ?> | Belfast's Premier Music Festival</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
