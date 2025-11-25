@@ -61,7 +61,12 @@ class BackgroundRotator {
     const layer = targetLayer === 1 ? this.layers.layer1 : this.layers.layer2;
     const imageData = this.images[imageIndex];
     // Support both string paths and objects with {path, location}
-    const imagePath = typeof imageData === 'string' ? imageData : imageData.path;
+    let imagePath = typeof imageData === 'string' ? imageData : imageData.path;
+    // Prepend basePath for subdirectory deployments
+    const basePath = window.basePath || '';
+    if (basePath && !imagePath.startsWith(basePath) && !imagePath.startsWith('http')) {
+      imagePath = basePath + imagePath;
+    }
     layer.style.backgroundImage = `url('${imagePath}')`;
 
   }
