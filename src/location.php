@@ -218,18 +218,6 @@ if ($venue) {
 include 'includes/header.php';
 ?>
 
-<!-- Mapbox GL JS for 3D Map -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
-<script>
-// Mapbox configuration - replace with your token
-window.mapboxConfig = {
-    token: '<?php echo $venue['mapbox_token'] ?? getenv('MAPBOX_TOKEN') ?: ''; ?>',
-    center: [<?php echo $venue['longitude'] ?? '-5.9167'; ?>, <?php echo $venue['latitude'] ?? '54.5833'; ?>],
-    venueName: <?php echo json_encode($venue['name'] ?? 'Venue'); ?>
-};
-</script>
-
 <?php if (!empty($venue['google_maps_api_key'])): ?>
 <script>
 // Map configuration data
@@ -495,15 +483,6 @@ window.basePath = '<?php echo BASE_PATH; ?>';
             <?php echo $venue['venue_map_url']; ?>
         </section>
         <?php endif; ?>
-
-        <!-- 3D Map Section -->
-        <section class="map-3d-section">
-            <div class="map-3d-header">
-                <h3><i class="las la-cube"></i> 3D Area View</h3>
-                <p>Explore the venue and surrounding area</p>
-            </div>
-            <div id="map-3d-container" class="map-3d-container"></div>
-        </section>
     </div>
 
     <!-- Pubs Tab -->
@@ -624,7 +603,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-<script src="<?php echo asset_url('scripts/map-3d.js'); ?>"></script>
 
 <?php include 'includes/footer.php'; ?>
