@@ -28,31 +28,32 @@ jobs:
 
       - name: Create production .env file
         run: |
-          cat > dist/.env <<EOF
-          # Database Configuration - Local/Demo (carbontype.co)
-          LOCAL_DB_HOST=localhost
-          LOCAL_DB_NAME=shine_festivals
-          LOCAL_DB_USER=shine_user
-          LOCAL_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
-
-          # Database Configuration - Production (crbntyp.com)
-          PROD_DB_HOST=localhost
-          PROD_DB_NAME=shine_festivals
-          PROD_DB_USER=shine_user
-          PROD_DB_PASS=${{ secrets.LOCAL_DB_PASS }}
-
-          # Database Charset
-          DB_CHARSET=utf8mb4
-
-          # Application Settings
-          APP_ENV=production
-          APP_TIMEZONE=Europe/London
-          DEFAULT_VENUE_ID=6
-
-          # Admin Authentication
-          ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
-          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
-          EOF
+          echo "# Database Configuration - Local/Demo (carbontype.co)" > dist/.env
+          echo "LOCAL_DB_HOST=localhost" >> dist/.env
+          echo "LOCAL_DB_NAME=shine_festivals" >> dist/.env
+          echo "LOCAL_DB_USER=shine_user" >> dist/.env
+          echo "LOCAL_DB_PASS=${{ secrets.LOCAL_DB_PASS }}" >> dist/.env
+          echo "" >> dist/.env
+          echo "# Database Configuration - Production (crbntyp.com)" >> dist/.env
+          echo "PROD_DB_HOST=localhost" >> dist/.env
+          echo "PROD_DB_NAME=shine_festivals" >> dist/.env
+          echo "PROD_DB_USER=shine_user" >> dist/.env
+          echo "PROD_DB_PASS=${{ secrets.LOCAL_DB_PASS }}" >> dist/.env
+          echo "" >> dist/.env
+          echo "# Database Charset" >> dist/.env
+          echo "DB_CHARSET=utf8mb4" >> dist/.env
+          echo "" >> dist/.env
+          echo "# Application Settings" >> dist/.env
+          echo "APP_ENV=production" >> dist/.env
+          echo "APP_TIMEZONE=Europe/London" >> dist/.env
+          echo "DEFAULT_VENUE_ID=6" >> dist/.env
+          echo "" >> dist/.env
+          echo "# Admin Authentication" >> dist/.env
+          echo "ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}" >> dist/.env
+          echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> dist/.env
+          echo "" >> dist/.env
+          echo "# Mapbox (3D Map)" >> dist/.env
+          echo "MAPBOX_TOKEN=${{ secrets.MAPBOX_TOKEN }}" >> dist/.env
 
       - name: Setup SSH key
         run: |
