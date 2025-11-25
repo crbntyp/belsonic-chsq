@@ -218,20 +218,99 @@ if ($venue) {
 include 'includes/header.php';
 ?>
 
+<!-- Mapbox GL JS for 3D Map -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+<script>
+// Mapbox configuration - replace with your token
+window.mapboxConfig = {
+    token: '<?php echo $venue['mapbox_token'] ?? getenv('MAPBOX_TOKEN') ?: ''; ?>',
+    center: [<?php echo $venue['longitude'] ?? '-5.9167'; ?>, <?php echo $venue['latitude'] ?? '54.5833'; ?>],
+    venueName: <?php echo json_encode($venue['name'] ?? 'Venue'); ?>
+};
+</script>
+
 <?php if (!empty($venue['google_maps_api_key'])): ?>
 <script>
 // Map configuration data
 window.mapConfig = {
     apiKey: <?php echo json_encode($venue['google_maps_api_key']); ?>,
     venueCenter: {lat: <?php echo $venue['latitude'] ?? '54.5973'; ?>, lng: <?php echo $venue['longitude'] ?? '-5.9301'; ?>},
+    venueName: <?php echo json_encode($venue['name'] ?? 'Venue'); ?>,
     venueCity: <?php echo json_encode($venueCity); ?>,
     pubsLocations: <?php echo json_encode($pubsMapLocations ?? []); ?>,
     accommodationLocations: <?php echo json_encode($accommodationMapLocations ?? []); ?>
 };
 
+// Dark theme style for Google Maps
+const darkMapStyle = [
+    { elementType: "geometry", stylers: [{ color: "#1a1a2e" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#1a1a2e" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+    { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+    { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+    { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+    { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+    { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+    { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+    { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+    { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+];
+
 // Initialize maps when Google Maps API loads
 function initMaps() {
     console.log('Initializing maps...', window.mapConfig);
+
+    // Initialize venue map
+    const venueMapDiv = document.getElementById('venue-map-container');
+    if (venueMapDiv) {
+        console.log('Creating venue map...');
+        const venueMap = new google.maps.Map(venueMapDiv, {
+            zoom: 16,
+            center: window.mapConfig.venueCenter,
+            styles: darkMapStyle
+        });
+
+        // Add venue marker
+        const venueMarker = new google.maps.Marker({
+            map: venueMap,
+            position: window.mapConfig.venueCenter,
+            title: window.mapConfig.venueName || 'Venue',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 12,
+                fillColor: '#ff006f',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 3
+            }
+        });
+
+        // Info window for venue
+        const venueInfoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 8px; background: #1a1a2e; color: white;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px; color: white;">${window.mapConfig.venueName || 'Venue'}</h3>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${window.mapConfig.venueCenter.lat},${window.mapConfig.venueCenter.lng}"
+                       target="_blank"
+                       style="color: #ff006f; text-decoration: none; font-weight: 600; font-size: 14px;">
+                        Get Directions →
+                    </a>
+                </div>
+            `
+        });
+
+        venueMarker.addListener('click', () => {
+            venueInfoWindow.open(venueMap, venueMarker);
+        });
+    }
 
     // Initialize pubs map
     if (window.mapConfig.pubsLocations.length > 0) {
@@ -240,7 +319,8 @@ function initMaps() {
             console.log('Creating pubs map...');
             const map = new google.maps.Map(pubsMapDiv, {
                 zoom: 14,
-                center: window.mapConfig.venueCenter
+                center: window.mapConfig.venueCenter,
+                styles: darkMapStyle
             });
             const geocoder = new google.maps.Geocoder();
             const bounds = new google.maps.LatLngBounds();
@@ -293,7 +373,8 @@ function initMaps() {
             console.log('Creating accommodation map...');
             const map = new google.maps.Map(accommodationMapDiv, {
                 zoom: 14,
-                center: window.mapConfig.venueCenter
+                center: window.mapConfig.venueCenter,
+                styles: darkMapStyle
             });
             const geocoder = new google.maps.Geocoder();
             const bounds = new google.maps.LatLngBounds();
@@ -356,7 +437,34 @@ window.basePath = '<?php echo BASE_PATH; ?>';
         <?php include 'includes/social-links.php'; ?>
     </header>
 
-    <!-- Tabs Navigation -->
+    <!-- Mobile Dropdown Navigation -->
+    <div class="location-dropdown">
+        <button class="location-dropdown-trigger" id="locationDropdownTrigger">
+            <i class="las la-map-marker"></i>
+            <span>Venue Location</span>
+            <i class="las la-angle-down dropdown-arrow"></i>
+        </button>
+        <div class="location-dropdown-menu" id="locationDropdownMenu">
+            <button class="location-dropdown-item active" data-tab="venue">
+                <i class="las la-map-marker"></i>
+                Venue Location
+            </button>
+            <?php if (!empty($venue['pubs_list']) || !empty($pubsMapHtml)): ?>
+            <button class="location-dropdown-item" data-tab="pubs">
+                <i class="las la-beer"></i>
+                Pubs & Bars
+            </button>
+            <?php endif; ?>
+            <?php if (!empty($venue['accommodation_list']) || !empty($accommodationMapHtml)): ?>
+            <button class="location-dropdown-item" data-tab="accommodation">
+                <i class="las la-hotel"></i>
+                Places to Stay
+            </button>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation (Desktop) -->
     <div class="location-tabs">
         <button class="location-tab active" data-tab="venue">
             <i class="las la-map-marker"></i>
@@ -378,11 +486,24 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
     <!-- Venue Tab -->
     <div class="tab-content active" id="venue-tab">
-        <?php if (!empty($venue['venue_map_url'])): ?>
+        <?php if (!empty($venue['google_maps_api_key'])): ?>
+        <section class="map">
+            <div id="venue-map-container" style="width:100%; height:450px;"></div>
+        </section>
+        <?php elseif (!empty($venue['venue_map_url'])): ?>
         <section class="map">
             <?php echo $venue['venue_map_url']; ?>
         </section>
         <?php endif; ?>
+
+        <!-- 3D Map Section -->
+        <section class="map-3d-section">
+            <div class="map-3d-header">
+                <h3><i class="las la-cube"></i> 3D Area View</h3>
+                <p>Explore the venue and surrounding area</p>
+            </div>
+            <div id="map-3d-container" class="map-3d-container"></div>
+        </section>
     </div>
 
     <!-- Pubs Tab -->
@@ -434,24 +555,76 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Tab switching
+    // Desktop tab switching
     const tabButtons = document.querySelectorAll('.location-tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    // Mobile dropdown elements
+    const dropdownTrigger = document.getElementById('locationDropdownTrigger');
+    const dropdownMenu = document.getElementById('locationDropdownMenu');
+    const dropdownItems = document.querySelectorAll('.location-dropdown-item');
+
+    // Function to switch tabs (works for both desktop and mobile)
+    function switchTab(tabName) {
+        // Update desktop tabs
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabButtons.forEach(btn => {
+            if (btn.getAttribute('data-tab') === tabName) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Update mobile dropdown items
+        dropdownItems.forEach(item => item.classList.remove('active'));
+        dropdownItems.forEach(item => {
+            if (item.getAttribute('data-tab') === tabName) {
+                item.classList.add('active');
+                // Update trigger text and icon
+                const icon = item.querySelector('i').className;
+                const text = item.textContent.trim();
+                dropdownTrigger.querySelector('i:first-child').className = icon;
+                dropdownTrigger.querySelector('span').textContent = text;
+            }
+        });
+
+        // Update content
+        tabContents.forEach(content => content.classList.remove('active'));
+        document.getElementById(tabName + '-tab').classList.add('active');
+    }
+
+    // Desktop tab click handlers
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const tabName = button.getAttribute('data-tab');
-
-            // Remove active class from all tabs and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            button.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
+            switchTab(button.getAttribute('data-tab'));
         });
+    });
+
+    // Mobile dropdown toggle
+    dropdownTrigger.addEventListener('click', () => {
+        dropdownTrigger.classList.toggle('open');
+        dropdownMenu.classList.toggle('open');
+    });
+
+    // Mobile dropdown item click
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', () => {
+            switchTab(item.getAttribute('data-tab'));
+            // Close dropdown
+            dropdownTrigger.classList.remove('open');
+            dropdownMenu.classList.remove('open');
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.location-dropdown')) {
+            dropdownTrigger.classList.remove('open');
+            dropdownMenu.classList.remove('open');
+        }
     });
 });
 </script>
+
+<script src="<?php echo asset_url('scripts/map-3d.js'); ?>"></script>
 
 <?php include 'includes/footer.php'; ?>

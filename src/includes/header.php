@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow" />
+    <meta property="og:title" content="Summer Series Belfast">
+    <meta property="og:description" content="Summer Series Belfast, world class events and gigs at CHSQ">
+    <meta property="og:image" content="https://www.summerseriesbelfast.com/img/assests/og-ssb.jpg">
+    <meta property="og:url" content="https://www.summerseriesbelfast.com">
+    <meta property="og:type" content="website">
     <?php
     // Get current venue for dynamic title, colors, and logo
     $currentVenueId = getCurrentVenueId();
@@ -29,6 +33,13 @@
     <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
 </head>
 <body>
+    <!-- Burger Menu - positioned outside containers for proper absolute positioning -->
+    <div class="burger-menu" id="burgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
     <?php
     // Venue switcher - only show on localhost for testing
     $currentDomain = $_SERVER['HTTP_HOST'] ?? '';
@@ -60,11 +71,6 @@
         <nav class="navbar">
             <div class="nav-brand">
                 <img src="<?php echo htmlspecialchars(asset_url($venueLogoUrl)); ?>" alt="<?php echo htmlspecialchars($venueName); ?>" class="logo" style="height: <?php echo htmlspecialchars($venueLogoHeight); ?>;">
-            </div>
-            <div class="burger-menu" id="burgerMenu">
-                <span></span>
-                <span></span>
-                <span></span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.php" class="<?php echo ($currentPage == 'lineup') ? 'active' : ''; ?>">Lineups</a></li>

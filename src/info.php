@@ -61,7 +61,32 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
 
 
-    <!-- Tabs Navigation -->
+    <!-- Mobile Dropdown Navigation -->
+    <div class="location-dropdown">
+        <button class="location-dropdown-trigger" id="locationDropdownTrigger">
+            <i class="las la-id-card"></i>
+            <span>Age Restrictions</span>
+            <i class="las la-angle-down dropdown-arrow"></i>
+        </button>
+        <div class="location-dropdown-menu" id="locationDropdownMenu">
+            <button class="location-dropdown-item active" data-tab="age">
+                <i class="las la-id-card"></i>
+                Age Restrictions
+            </button>
+            <button class="location-dropdown-item" data-tab="faq">
+                <i class="las la-question-circle"></i>
+                FAQs
+            </button>
+            <?php if (getCurrentVenueId() !== 3): // Hide parking tab for CHSQ ?>
+            <button class="location-dropdown-item" data-tab="parking">
+                <i class="las la-bus"></i>
+                Coach/Bus Parking
+            </button>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation (Desktop) -->
     <div class="location-tabs">
         <button class="location-tab active" data-tab="age">
             <i class="las la-id-card"></i>
@@ -258,22 +283,72 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Tab switching
+    // Desktop tab switching
     const tabButtons = document.querySelectorAll('.location-tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    // Mobile dropdown elements
+    const dropdownTrigger = document.getElementById('locationDropdownTrigger');
+    const dropdownMenu = document.getElementById('locationDropdownMenu');
+    const dropdownItems = document.querySelectorAll('.location-dropdown-item');
+
+    // Function to switch tabs (works for both desktop and mobile)
+    function switchTab(tabName) {
+        // Update desktop tabs
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabButtons.forEach(btn => {
+            if (btn.getAttribute('data-tab') === tabName) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Update mobile dropdown items
+        dropdownItems.forEach(item => item.classList.remove('active'));
+        dropdownItems.forEach(item => {
+            if (item.getAttribute('data-tab') === tabName) {
+                item.classList.add('active');
+                // Update trigger text and icon
+                const icon = item.querySelector('i').className;
+                const text = item.textContent.trim();
+                dropdownTrigger.querySelector('i:first-child').className = icon;
+                dropdownTrigger.querySelector('span').textContent = text;
+            }
+        });
+
+        // Update content
+        tabContents.forEach(content => content.classList.remove('active'));
+        document.getElementById(tabName + '-tab').classList.add('active');
+    }
+
+    // Desktop tab click handlers
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const tabName = button.getAttribute('data-tab');
-
-            // Remove active class from all tabs and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            button.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
+            switchTab(button.getAttribute('data-tab'));
         });
+    });
+
+    // Mobile dropdown toggle
+    dropdownTrigger.addEventListener('click', () => {
+        dropdownTrigger.classList.toggle('open');
+        dropdownMenu.classList.toggle('open');
+    });
+
+    // Mobile dropdown item click
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', () => {
+            switchTab(item.getAttribute('data-tab'));
+            // Close dropdown
+            dropdownTrigger.classList.remove('open');
+            dropdownMenu.classList.remove('open');
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.location-dropdown')) {
+            dropdownTrigger.classList.remove('open');
+            dropdownMenu.classList.remove('open');
+        }
     });
 
     // FAQ Accordion
