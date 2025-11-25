@@ -63,6 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $description = $_POST['description'] ?? '';
 
+    // Coordinates
+    $latitude = !empty($_POST['latitude']) ? (float)$_POST['latitude'] : null;
+    $longitude = !empty($_POST['longitude']) ? (float)$_POST['longitude'] : null;
+
     // Maps
     $venue_map_url = $_POST['venue_map_url'] ?? '';
     $google_maps_api_key = $_POST['google_maps_api_key'] ?? '';
@@ -123,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 UPDATE venues SET
                     name = ?, address = ?, city = ?, domain = ?, domain_aliases = ?, country = ?, postcode = ?,
                     capacity = ?, description = ?,
+                    latitude = ?, longitude = ?,
                     venue_map_url = ?, google_maps_api_key = ?, pubs_list = ?, accommodation_list = ?,
                     primary_color = ?, secondary_color = ?,
                     logo_url = ?, logo_height = ?,
@@ -132,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ")->execute([
                 $name, $address, $city, $domain, $domain_aliases, $country, $postcode,
                 $capacity, $description,
+                $latitude, $longitude,
                 $venue_map_url, $google_maps_api_key, $pubs_list, $accommodation_list,
                 $primary_color, $secondary_color,
                 $logo_url, $logo_height,
@@ -159,14 +165,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("
                 INSERT INTO venues (
                     name, address, city, domain, domain_aliases, country, postcode, capacity, description,
+                    latitude, longitude,
                     venue_map_url, google_maps_api_key, pubs_list, accommodation_list,
                     primary_color, secondary_color,
                     logo_url, logo_height,
                     facebook_url, twitter_url, instagram_url,
                     bg_image_1, bg_image_2, bg_image_3, bg_image_4, bg_image_5
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ")->execute([
                 $name, $address, $city, $domain, $domain_aliases, $country, $postcode, $capacity, $description,
+                $latitude, $longitude,
                 $venue_map_url, $google_maps_api_key, $pubs_list, $accommodation_list,
                 $primary_color, $secondary_color,
                 $logo_url, $logo_height,
@@ -235,7 +243,44 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
                 <input type="hidden" name="venue_id" id="venue_id" value="">
             <?php endif; ?>
 
-            <!-- Form Tabs -->
+            <!-- Mobile Tab Dropdown -->
+            <div class="admin-tab-dropdown">
+                <button type="button" class="admin-tab-dropdown-trigger" id="adminTabDropdownTrigger">
+                    <span class="trigger-content">
+                        <i class="las la-info-circle"></i>
+                        <span>Basic Info</span>
+                    </span>
+                    <i class="las la-angle-down dropdown-arrow"></i>
+                </button>
+                <div class="admin-tab-dropdown-menu" id="adminTabDropdownMenu">
+                    <button type="button" class="admin-tab-dropdown-item active" data-tab="basic">
+                        <i class="las la-info-circle"></i>
+                        Basic Info
+                    </button>
+                    <button type="button" class="admin-tab-dropdown-item" data-tab="location">
+                        <i class="las la-map"></i>
+                        Location
+                    </button>
+                    <button type="button" class="admin-tab-dropdown-item" data-tab="branding">
+                        <i class="las la-palette"></i>
+                        Branding
+                    </button>
+                    <button type="button" class="admin-tab-dropdown-item" data-tab="social">
+                        <i class="lab la-instagram"></i>
+                        Social
+                    </button>
+                    <button type="button" class="admin-tab-dropdown-item" data-tab="media">
+                        <i class="las la-images"></i>
+                        Media
+                    </button>
+                    <button type="button" class="admin-tab-dropdown-item" data-tab="faqs">
+                        <i class="las la-question-circle"></i>
+                        FAQs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form Tabs (Desktop) -->
             <div class="location-tabs">
                 <button type="button" class="location-tab active" data-tab="basic">
                     <i class="las la-info-circle"></i>
@@ -368,17 +413,36 @@ $venues = $db->query("SELECT * FROM venues ORDER BY name ASC")->fetchAll();
             <div class="tab-content" id="location-tab">
                 <div class="form-section">
 
+                <h3 style="margin: 0 0 1.5rem 0; color: #ff006f;"><i class="las la-map-pin"></i> Venue Coordinates</h3>
+                <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.7);">These coordinates are used for both the Google Maps and 3D Mapbox map on the location page.</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="latitude">Latitude</label>
+                        <input type="text" id="latitude" name="latitude" placeholder="e.g., 54.5973"
+                               value="<?php echo htmlspecialchars($editVenue['latitude'] ?? ''); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude">Longitude</label>
+                        <input type="text" id="longitude" name="longitude" placeholder="e.g., -5.9301"
+                               value="<?php echo htmlspecialchars($editVenue['longitude'] ?? ''); ?>">
+                    </div>
+                </div>
+                <small style="display: block; margin-bottom: 2rem;">Find coordinates on <a href="https://www.google.com/maps" target="_blank">Google Maps</a> - right-click on location and copy coordinates</small>
+
+                <h3 style="margin: 2rem 0 1.5rem 0; color: #ff006f;"><i class="las la-map"></i> Map Settings</h3>
+
                 <div class="form-group">
-                    <label for="venue_map_url">Venue Location Map Embed Code</label>
+                    <label for="venue_map_url">Venue Location Map Embed Code (Fallback)</label>
                     <textarea id="venue_map_url" name="venue_map_url" rows="3" placeholder="<iframe src=&quot;...&quot;></iframe>"><?php echo htmlspecialchars($editVenue['venue_map_url'] ?? ''); ?></textarea>
-                    <small>Paste the full iframe embed code from Google Maps for the venue location</small>
+                    <small>Optional: Used only if Google Maps API key is not set. Paste the full iframe embed code from Google Maps.</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="google_maps_api_key">Google Maps API Key (Optional)</label>
+                    <label for="google_maps_api_key">Google Maps API Key</label>
                     <input type="text" id="google_maps_api_key" name="google_maps_api_key" placeholder="AIza..."
                            value="<?php echo htmlspecialchars($editVenue['google_maps_api_key'] ?? ''); ?>">
-                    <small>Required to show multiple pins on pubs/accommodation maps. <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Get API key</a></small>
+                    <small>Enables interactive maps with markers. <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Get API key</a></small>
                 </div>
 
                 <h3 style="margin: 2rem 0 1.5rem 0; color: #ff006f;">Pubs & Accommodation</h3>
@@ -653,23 +717,73 @@ document.addEventListener('DOMContentLoaded', function() {
     renderBackgroundImages();
     initDropzone();
 
-    // Tab switching
+    // Tab switching - Desktop and Mobile
     const tabButtons = document.querySelectorAll('.location-tab');
     const tabContents = document.querySelectorAll('.tab-content');
+    const dropdownTrigger = document.getElementById('adminTabDropdownTrigger');
+    const dropdownMenu = document.getElementById('adminTabDropdownMenu');
+    const dropdownItems = document.querySelectorAll('.admin-tab-dropdown-item');
 
+    // Function to switch tabs (works for both desktop and mobile)
+    function switchTab(tabName) {
+        // Update desktop tabs
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabButtons.forEach(btn => {
+            if (btn.getAttribute('data-tab') === tabName) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Update mobile dropdown items
+        dropdownItems.forEach(item => item.classList.remove('active'));
+        dropdownItems.forEach(item => {
+            if (item.getAttribute('data-tab') === tabName) {
+                item.classList.add('active');
+                // Update trigger text and icon
+                const icon = item.querySelector('i').className;
+                const text = item.textContent.trim();
+                dropdownTrigger.querySelector('.trigger-content i').className = icon;
+                dropdownTrigger.querySelector('.trigger-content span').textContent = text;
+            }
+        });
+
+        // Update content
+        tabContents.forEach(content => content.classList.remove('active'));
+        document.getElementById(tabName + '-tab').classList.add('active');
+    }
+
+    // Desktop tab click handlers
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const tabName = button.getAttribute('data-tab');
-
-            // Remove active class from all tabs and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            button.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
+            switchTab(button.getAttribute('data-tab'));
         });
     });
+
+    // Mobile dropdown toggle
+    if (dropdownTrigger) {
+        dropdownTrigger.addEventListener('click', () => {
+            dropdownTrigger.classList.toggle('open');
+            dropdownMenu.classList.toggle('open');
+        });
+
+        // Mobile dropdown item click
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', () => {
+                switchTab(item.getAttribute('data-tab'));
+                // Close dropdown
+                dropdownTrigger.classList.remove('open');
+                dropdownMenu.classList.remove('open');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.admin-tab-dropdown')) {
+                dropdownTrigger.classList.remove('open');
+                dropdownMenu.classList.remove('open');
+            }
+        });
+    }
 });
 
 function deleteVenue(id, name) {

@@ -43,11 +43,55 @@ if (!isset($venueBackgrounds)) {
     window.basePath = '<?php echo BASE_PATH; ?>';
     </script>
     <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
+    <script>
+    // Admin Mobile Menu Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminBurger = document.getElementById('adminBurger');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminOverlay = document.getElementById('adminMobileOverlay');
+
+        if (adminBurger && adminSidebar && adminOverlay) {
+            // Toggle menu on burger click
+            adminBurger.addEventListener('click', function() {
+                adminBurger.classList.toggle('active');
+                adminSidebar.classList.toggle('active');
+                adminOverlay.classList.toggle('active');
+            });
+
+            // Close menu on overlay click
+            adminOverlay.addEventListener('click', function() {
+                adminBurger.classList.remove('active');
+                adminSidebar.classList.remove('active');
+                adminOverlay.classList.remove('active');
+            });
+
+            // Close menu when clicking a nav link
+            const navLinks = adminSidebar.querySelectorAll('a');
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    adminBurger.classList.remove('active');
+                    adminSidebar.classList.remove('active');
+                    adminOverlay.classList.remove('active');
+                });
+            });
+        }
+    });
+    </script>
 </head>
 <body class="admin-body">
+    <!-- Admin Burger Menu -->
+    <div class="admin-burger" id="adminBurger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="admin-mobile-overlay" id="adminMobileOverlay"></div>
+
     <!-- Background Rotator will be inserted by JavaScript -->
     <div class="admin-wrapper">
-        <aside class="admin-sidebar">
+        <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
                 <i class="las la-guitar"></i>
                 <h2>Admin</h2>
