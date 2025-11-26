@@ -15,7 +15,7 @@
             <?php include __DIR__ . '/social-links.php'; ?>
             <p>&copy; 2026 <?php echo htmlspecialchars($venueName ?? 'Festival'); ?>. All rights reserved. | <a href="#" id="privacyTrigger">Privacy Policy</a></p>
             <div class="app-credit">
-                <span class="app-credit-logo">crbntyp</span>
+                <a href="https://crbntyp.com" class="app-credit-logo" target="_blank" rel="noopener">crbntyp</a>
             </div>
         </div>
     </footer>
