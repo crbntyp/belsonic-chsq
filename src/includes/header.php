@@ -89,9 +89,7 @@ $ogBasePath = (strpos($venueDomainClean, 'crbntyp.com') !== false) ? BASE_PATH :
                 <li><a href="index.php" class="<?php echo ($currentPage == 'lineup') ? 'active' : ''; ?>">Lineups</a></li>
                 <li><a href="location.php" class="<?php echo ($currentPage == 'location') ? 'active' : ''; ?>">Location</a></li>
                 <li><a href="info.php" class="<?php echo ($currentPage == 'info') ? 'active' : ''; ?>">General Info & Age Restrictions</a></li>
-                <?php if ($currentVenueId == 2): // Belsonic only ?>
                 <li><a href="accessibility.php" class="<?php echo ($currentPage == 'accessibility') ? 'active' : ''; ?>">Accessibility</a></li>
-                <?php endif; ?>
             </ul>
         </nav>
 
@@ -104,9 +102,7 @@ $ogBasePath = (strpos($venueDomainClean, 'crbntyp.com') !== false) ? BASE_PATH :
                     <li><a href="index.php" class="<?php echo ($currentPage == 'lineup') ? 'active' : ''; ?>">Lineups</a></li>
                     <li><a href="location.php" class="<?php echo ($currentPage == 'location') ? 'active' : ''; ?>">Location</a></li>
                     <li><a href="info.php" class="<?php echo ($currentPage == 'info') ? 'active' : ''; ?>">General Info & Age Restrictions</a></li>
-                    <?php if ($currentVenueId == 2): // Belsonic only ?>
                     <li><a href="accessibility.php" class="<?php echo ($currentPage == 'accessibility') ? 'active' : ''; ?>">Accessibility</a></li>
-                    <?php endif; ?>
                 </ul>
             </div>
         </div>

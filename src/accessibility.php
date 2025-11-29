@@ -6,10 +6,32 @@ $currentPage = 'accessibility';
 
 $db = getDB();
 
+// Check if current venue is Belsonic (ID=2) - only Belsonic shows the full accessibility info tab
+$isBelsonic = (getCurrentVenueId() == 2);
+
 // Fetch current venue
 $venueStmt = $db->prepare("SELECT * FROM venues WHERE id = ?");
 $venueStmt->execute([getCurrentVenueId()]);
 $venue = $venueStmt->fetch();
+
+// Extract clean domain for email addresses (strip protocol and path)
+// Venue-specific fallbacks
+$domainFallbacks = [
+    2 => 'belsonic.com',           // Belsonic
+    5 => 'customhousesquare.com',  // CHSQ
+];
+$venueDomain = $domainFallbacks[getCurrentVenueId()] ?? 'shine.net';
+
+if (!empty($venue['domain'])) {
+    $parsed = parse_url($venue['domain']);
+    $host = $parsed['host'] ?? $venue['domain'];
+    // Remove www. prefix if present
+    $host = preg_replace('/^www\./', '', $host);
+    // Only use if it's a real domain (not localhost)
+    if ($host && strpos($host, 'localhost') === false && strpos($host, '.') !== false) {
+        $venueDomain = $host;
+    }
+}
 
 // Build array of background images from venue for the rotator
 $venueBackgrounds = [];
@@ -53,7 +75,8 @@ window.basePath = '<?php echo BASE_PATH; ?>';
         <?php include 'includes/social-links.php'; ?>
     </header>
 
-    <!-- Mobile Dropdown Navigation -->
+    <?php if ($isBelsonic): ?>
+    <!-- Mobile Dropdown Navigation (Belsonic only) -->
     <div class="location-dropdown">
         <button class="location-dropdown-trigger" id="locationDropdownTrigger">
             <i class="las la-wheelchair"></i>
@@ -72,7 +95,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
         </div>
     </div>
 
-    <!-- Tabs Navigation (Desktop) -->
+    <!-- Tabs Navigation (Desktop - Belsonic only) -->
     <div class="location-tabs">
         <button class="location-tab active" data-tab="info">
             <i class="las la-wheelchair"></i>
@@ -83,12 +106,14 @@ window.basePath = '<?php echo BASE_PATH; ?>';
             Accessibility FAQs
         </button>
     </div>
+    <?php endif; ?>
 
-    <!-- Accessibility Info Tab -->
+    <?php if ($isBelsonic): ?>
+    <!-- Accessibility Info Tab (Belsonic only) -->
     <div class="tab-content active" id="info-tab">
         <section class="transport-intro">
             <p class="lead">
-                At <?php echo htmlspecialchars($venue['name'] ?? 'our festival'); ?> we endeavour to provide accessible access for all. Please see below for information regarding our accessibility areas and procedures. If you require any further information, please email <a href="mailto:accessibility@belsonic.com">accessibility@belsonic.com</a>
+                At <?php echo htmlspecialchars($venue['name'] ?? 'our festival'); ?> we endeavour to provide accessible access for all. Please see below for information regarding our accessibility areas and procedures. If you require any further information, please email <a href="mailto:accessibility@<?php echo htmlspecialchars($venueDomain); ?>">accessibility@<?php echo htmlspecialchars($venueDomain); ?></a>
             </p>
         </section>
 
@@ -102,7 +127,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                 </h3>
                 <p><strong>For Accessible Ticket Holders Only</strong></p>
                 <p>We are currently putting plans in place for 2026. Accessible ticket holders will be contacted closer to the event date with information.</p>
-                <p>If you have any other accessible queries please contact us on <a href="mailto:accessibility@belsonic.com">accessibility@belsonic.com</a></p>
+                <p>If you have any other accessible queries please contact us on <a href="mailto:accessibility@<?php echo htmlspecialchars($venueDomain); ?>">accessibility@<?php echo htmlspecialchars($venueDomain); ?></a></p>
             </div>
 
             <div class="info-box">
@@ -144,15 +169,16 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                 <div class="contact-methods">
                     <div class="contact-method">
                         <i class="las la-envelope"></i>
-                        <span>Email: <a href="mailto:accessibility@belsonic.com">accessibility@belsonic.com</a></span>
+                        <span>Email: <a href="mailto:accessibility@<?php echo htmlspecialchars($venueDomain); ?>">accessibility@<?php echo htmlspecialchars($venueDomain); ?></a></span>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+    <?php endif; ?>
 
     <!-- Accessibility FAQs Tab -->
-    <div class="tab-content" id="faq-tab">
+    <div class="tab-content<?php echo $isBelsonic ? '' : ' active'; ?>" id="faq-tab">
         <section class="ticket-faq">
             <h2>Frequently Asked Questions</h2>
             <div class="faq-accordion">
@@ -163,7 +189,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                     </button>
                     <div class="faq-accordion-content">
                         <p>Accessible tickets are available through the "Accessible Tickets" button on Ticketmaster's main event page. Purchasers must first register for an AAR (Accessible Accommodation Request) number via "Ticketmaster's Accessible Database" before buying.</p>
-                        <p><strong>Important:</strong> BELSONIC requires this unique identifier and cannot accept medical evidence directly.</p>
+                        <p><strong>Important:</strong> <?php echo htmlspecialchars(strtoupper($venue['name'] ?? 'The venue')); ?> requires this unique identifier and cannot accept medical evidence directly.</p>
                     </div>
                 </div>
 
@@ -206,7 +232,8 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Desktop tab switching
+    <?php if ($isBelsonic): ?>
+    // Desktop tab switching (Belsonic only)
     const tabButtons = document.querySelectorAll('.location-tab');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -273,8 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownMenu.classList.remove('open');
         }
     });
+    <?php endif; ?>
 
-    // FAQ Accordion
+    // FAQ Accordion (all venues)
     const accordionHeaders = document.querySelectorAll('.faq-accordion-header');
 
     accordionHeaders.forEach(header => {

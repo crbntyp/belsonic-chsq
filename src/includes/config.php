@@ -243,9 +243,13 @@ define('DEFAULT_VENUE_ID', $detectedVenueId);
 
 /**
  * Get current venue ID
- * Returns venue based on domain matching from database
+ * Returns venue based on session override (for testing) or domain matching from database
  */
 function getCurrentVenueId() {
+    // Check for test venue override in session
+    if (isset($_SESSION['test_venue_id'])) {
+        return (int)$_SESSION['test_venue_id'];
+    }
     return DEFAULT_VENUE_ID;
 }
 

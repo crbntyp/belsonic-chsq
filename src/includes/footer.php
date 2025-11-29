@@ -7,9 +7,7 @@
                     <li><a href="index.php">Lineups</a></li>
                     <li><a href="location.php">Location</a></li>
                     <li><a href="info.php">General Info & Age Restrictions</a></li>
-                    <?php if ($currentVenueId == 2): // Belsonic only ?>
                     <li><a href="accessibility.php">Accessibility</a></li>
-                    <?php endif; ?>
                 </ul>
             </div>
             <?php include __DIR__ . '/social-links.php'; ?>
