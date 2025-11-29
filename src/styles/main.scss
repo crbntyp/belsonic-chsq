@@ -1592,6 +1592,14 @@ img {
     margin: 0 auto var(--spacing-xl);
     text-align: center;
 
+    a {
+      color: var(--venue-color-primary);
+
+      &:hover {
+        color: var(--venue-color-secondary);
+      }
+    }
+
     @media (max-width: 768px) {
       width: 100%;
     }
