@@ -188,41 +188,41 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>Accessible tickets are available through the "Accessible Tickets" button on Ticketmaster's main event page. Purchasers must first register for an AAR (Accessible Accommodation Request) number via "Ticketmaster's Accessible Database" before buying.</p>
-                        <p><strong>Important:</strong> <?php echo htmlspecialchars(strtoupper($venue['name'] ?? 'The venue')); ?> requires this unique identifier and cannot accept medical evidence directly.</p>
+                        <p>Accessible tickets are available through the "Accessible Tickets" button on Ticketmaster's main event page. Customers must first register for an AAR number through Ticketmaster's Accessible Database, which serves as a unique identifier that Ticketmaster will issue to those customers who have registered their accessible requirements.</p>
+                        <p><?php echo htmlspecialchars(strtoupper($venue['name'] ?? 'The venue')); ?> doesn't accept medical evidence directly; all accessible ticket purchases require a valid AAR number.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>I have wheelchair/accessible tickets, but I'm coming with a larger party. Can they sit/stand nearby?</span>
+                        <span>I have wheelchair/accessible tickets, but I'm coming with a larger party. Can they sit/stand in the same area as me?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>No. Due to capacity constraints, accessible ticket holders receive one companion ticket, except where there are verified additional care requirements.</p>
-                        <p>This policy ensures maximum accessibility availability for all patrons requiring wheelchair access.</p>
+                        <p>No. Due to capacity constraints, accessible ticket holders are limited to one companion ticket, except in cases of verified additional care requirements arranged at booking.</p>
+                        <p>This policy ensures maximum accessibility for all customers requiring wheelchair or accessible access.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>I bought General Admission tickets but now need accessible tickets—what options exist?</span>
+                        <span>I bought General Admission tickets but now need accessible tickets—what are my options?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>Check Ticketmaster for available accessible tickets. Register for the Accessible Database first, then purchase accessible tickets and request a refund of your original booking through your MyAccount.</p>
-                        <p><strong>Important:</strong> Both purchases must be made via the same Ticketmaster account, with refund requests submitted the same day.</p>
+                        <p>Customers should check Ticketmaster's event page for available accessible tickets and register with the Accessible Database if needed.</p>
+                        <p>After purchasing accessible tickets through the same account, customers can request a refund of their original booking through MyAccount on the same day.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>Can I bring a camping/collapsible chair to this outdoor event?</span>
+                        <span>Can I bring a camping/collapsible chair to an outdoor event?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>No. No folding or collapsible chairs are permitted in standing/general admission areas for health and safety reasons.</p>
-                        <p>Limited respite seating exists but offers no sightlines. Those requiring continuous seating should explore accessible ticket exchanges instead.</p>
+                        <p>No. Folding or collapsible chairs are prohibited in standing areas for health and safety reasons. Security will refuse entry with personal chairs.</p>
+                        <p>The venue provides limited respite seating without sightlines. Those needing continuous seating should contact Ticketmaster's Accessible team regarding ticket exchanges or resale options.</p>
                     </div>
                 </div>
             </div>
