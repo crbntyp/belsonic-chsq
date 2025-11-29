@@ -222,7 +222,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                     </button>
                     <div class="faq-accordion-content">
                         <p>Unfortunately not, no folding or collapsible chairs are permitted in standing/general admission areas for health and safety reasons. If you do arrive with personal chairs, security will unfortunately have to refuse you entry with them, and you would either need to dispose of them (which nobody wants) or drop them home and then return again to the venue.</p>
-                        <p>Where possible, we will provide respite seating (no view) for short rest periods during the show. If, however, you require a seat throughout to attend a show, unfortunately, standing tickets will not be suitable. Ticketmaster's Accessible team may be able to facilitate an exchange to accessible tickets, subject to availability. If there is no capacity to offer an exchange, the option of listing your unsuitable tickets for resale may be available to you - please check your <a href="https://my.ticketmaster.ie/" target="_blank">Ticketmaster MyAccount</a>.</p>
+                        <p>Ticketmaster's Accessible team may be able to facilitate an exchange to accessible tickets, subject to availability. If there is no capacity to offer an exchange, the option of listing your unsuitable tickets for resale may be available to you - please check your <a href="https://my.ticketmaster.ie/" target="_blank">Ticketmaster MyAccount</a>.</p>
                     </div>
                 </div>
             </div>
