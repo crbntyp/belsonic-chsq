@@ -181,6 +181,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
     <div class="tab-content<?php echo $isBelsonic ? '' : ' active'; ?>" id="faq-tab">
         <section class="ticket-faq">
             <h2>Frequently Asked Questions</h2>
+            <p class="lead">At <?php echo htmlspecialchars($venue['name'] ?? 'our festival'); ?> we endeavour to provide accessible access for all. Please see below for information regarding accessibility. If you require any further information, please email <a href="mailto:accessibility@<?php echo htmlspecialchars($venueDomain); ?>">accessibility@<?php echo htmlspecialchars($venueDomain); ?></a>.</p>
             <div class="faq-accordion">
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
