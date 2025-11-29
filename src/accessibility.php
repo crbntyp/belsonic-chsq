@@ -188,41 +188,40 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>Accessible tickets are available through the "Accessible Tickets" button on Ticketmaster's main event page. Customers must first register for an AAR number through Ticketmaster's Accessible Database, which serves as a unique identifier that Ticketmaster will issue to those customers who have registered their accessible requirements.</p>
-                        <p><?php echo htmlspecialchars(strtoupper($venue['name'] ?? 'The venue')); ?> doesn't accept medical evidence directly; all accessible ticket purchases require a valid AAR number.</p>
+                        <p>Accessible tickets are purchasable via the 'Accessible Tickets' button on the main event page on Ticketmaster. Customers must register for an AAR number through Ticketmaster's Accessible Database <a href="https://help.ticketmaster.ie/hc/en-ie/requests/new?ticket_form_id=360000108478" target="_blank">here</a> before purchasing any accessible tickets.</p>
+                        <p>An AAR number is a unique identifier that Ticketmaster will issue to those customers who have registered their accessible requirements for the Ticketmaster Accessible Database. <?php echo htmlspecialchars(strtoupper($venue['name'] ?? 'The venue')); ?> cannot accept any medical evidence directly, so those who wish to book accessible tickets or apply for accessible accommodations must have a valid AAR number to proceed. Registration can be done on Ticketmaster's website <a href="https://help.ticketmaster.ie/hc/en-ie/requests/new?ticket_form_id=360000108478" target="_blank">here</a>.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>I have wheelchair/accessible tickets, but I'm coming with a larger party. Can they sit/stand in the same area as me?</span>
+                        <span>I have wheelchair/accessible tickets, but I'm coming to the event with a larger party. Can they sit/stand in the same area as me?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>No. Due to capacity constraints, accessible ticket holders are limited to one companion ticket, except in cases of verified additional care requirements arranged at booking.</p>
-                        <p>This policy ensures maximum accessibility for all customers requiring wheelchair or accessible access.</p>
+                        <p>Unfortunately not. Due to capacity limitations, all accessible ticket holders are limited to one companion ticket, except where there are verified additional care requirements (and bookings have been made to reflect this - we cannot add additional tickets after the fact), to ensure as many accessible customers who require wheelchair/accessible access can attend as possible.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>I bought General Admission tickets but now need accessible tickets—what are my options?</span>
+                        <span>I bought General Admission tickets but I now need accessible tickets to attend - what are my options?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>Customers should check Ticketmaster's event page for available accessible tickets and register with the Accessible Database if needed.</p>
-                        <p>After purchasing accessible tickets through the same account, customers can request a refund of their original booking through MyAccount on the same day.</p>
+                        <p>Please check the Ticketmaster event page to see if any suitable accessible tickets are available for sale. Customers must register for Ticketmaster's Accessible Database <a href="https://help.ticketmaster.ie/hc/en-ie/requests/new?ticket_form_id=360000108478" target="_blank">here</a> before purchasing/requesting an exchange to any accessible tickets.</p>
+                        <p>If so, you can purchase these and then ask Ticketmaster to refund your original booking. Please note, both purchases must be made via the same Ticketmaster account, and the refund must be requested on the same day as the new booking is made via your <a href="https://my.ticketmaster.ie/" target="_blank">MyAccount</a>.</p>
                     </div>
                 </div>
 
                 <div class="faq-accordion-item">
                     <button class="faq-accordion-header">
-                        <span>Can I bring a camping/collapsible chair to an outdoor event?</span>
+                        <span>Can I bring a camping/collapsible chair with me to an outdoor event?</span>
                         <i class="las la-angle-down"></i>
                     </button>
                     <div class="faq-accordion-content">
-                        <p>No. Folding or collapsible chairs are prohibited in standing areas for health and safety reasons. Security will refuse entry with personal chairs.</p>
-                        <p>The venue provides limited respite seating without sightlines. Those needing continuous seating should contact Ticketmaster's Accessible team regarding ticket exchanges or resale options.</p>
+                        <p>Unfortunately not, no folding or collapsible chairs are permitted in standing/general admission areas for health and safety reasons. If you do arrive with personal chairs, security will unfortunately have to refuse you entry with them, and you would either need to dispose of them (which nobody wants) or drop them home and then return again to the venue.</p>
+                        <p>Where possible, we will provide respite seating (no view) for short rest periods during the show. If, however, you require a seat throughout to attend a show, unfortunately, standing tickets will not be suitable. Ticketmaster's Accessible team may be able to facilitate an exchange to accessible tickets, subject to availability. If there is no capacity to offer an exchange, the option of listing your unsuitable tickets for resale may be available to you - please check your <a href="https://my.ticketmaster.ie/" target="_blank">Ticketmaster MyAccount</a>.</p>
                     </div>
                 </div>
             </div>
