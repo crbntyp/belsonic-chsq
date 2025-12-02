@@ -129,7 +129,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                             <?php if (!empty($mainAct['support_acts'])): ?>
                                 <div class="support-acts">
                                     <div class="support-acts-content">
-                                        <?php echo $mainAct['support_acts']; ?>
+                                        <?php echo processSupportActs($mainAct['support_acts']); ?>
                                     </div>
                                 </div>
                             <?php endif; ?>

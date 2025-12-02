@@ -401,8 +401,11 @@ img {
           font-size: 12px;
           color:var(--venue-color-secondary)
         }
-        & p:first-of-type{
-          font-size: 14px;
+        p.superior {
+          font-size: 15px;
+        }
+        p.superior-config {
+          display: none;
         }
 
         ul, ol {

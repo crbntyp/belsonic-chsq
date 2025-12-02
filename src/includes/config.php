@@ -254,6 +254,64 @@ function getCurrentVenueId() {
 }
 
 /**
+ * Process support acts HTML to apply superior styling
+ * Checks if last <p> contains only a number 1-4, uses that to determine
+ * how many acts get the "superior" class. Hides the config <p> from output.
+ * Backward compatible: no number = first act only is superior.
+ */
+function processSupportActs($html) {
+    if (empty($html)) {
+        return $html;
+    }
+
+    // Use DOMDocument to parse and manipulate HTML
+    $dom = new DOMDocument();
+    // Suppress warnings for malformed HTML, wrap in container for proper parsing
+    @$dom->loadHTML('<div>' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+    // Get all <p> elements
+    $paragraphs = $dom->getElementsByTagName('p');
+    $pCount = $paragraphs->length;
+
+    if ($pCount === 0) {
+        return $html;
+    }
+
+    // Check if last <p> contains only a number 1-4
+    $lastP = $paragraphs->item($pCount - 1);
+    $lastContent = trim($lastP->textContent);
+    $superiorCount = 1; // Default: first act only
+    $hideLastP = false;
+
+    if (preg_match('/^[1-4]$/', $lastContent)) {
+        $superiorCount = (int)$lastContent;
+        $hideLastP = true;
+    }
+
+    // Apply superior class to first N paragraphs
+    for ($i = 0; $i < min($superiorCount, $pCount - ($hideLastP ? 1 : 0)); $i++) {
+        $p = $paragraphs->item($i);
+        $existingClass = $p->getAttribute('class');
+        $p->setAttribute('class', trim($existingClass . ' superior'));
+    }
+
+    // Hide the config <p> by adding a hidden class
+    if ($hideLastP) {
+        $existingClass = $lastP->getAttribute('class');
+        $lastP->setAttribute('class', trim($existingClass . ' superior-config'));
+    }
+
+    // Extract the inner HTML (removing our wrapper div)
+    $output = '';
+    $container = $dom->getElementsByTagName('div')->item(0);
+    foreach ($container->childNodes as $child) {
+        $output .= $dom->saveHTML($child);
+    }
+
+    return $output;
+}
+
+/**
  * Create database connection
  */
 function getDB() {

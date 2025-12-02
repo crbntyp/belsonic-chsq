@@ -444,7 +444,7 @@ foreach ($gigs as $gig) {
                     <?php if (!empty($gig['support_acts'])): ?>
                         <div class="support-acts">
                             <div class="support-acts-content">
-                                <?php echo $gig['support_acts']; ?>
+                                <?php echo processSupportActs($gig['support_acts']); ?>
                             </div>
                         </div>
                     <?php endif; ?>
