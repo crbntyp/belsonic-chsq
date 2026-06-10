@@ -186,6 +186,9 @@ window.shineMaps = {};
 
     function makeMap(id, center, zoom) {
         var map = L.map(id, { scrollWheelZoom: false }).setView(center, zoom);
+        // Drop Leaflet's default prefix (it includes a Ukrainian flag); keep only
+        // the required OpenStreetMap/CARTO tile attribution.
+        map.attributionControl.setPrefix(false);
         L.tileLayer(TILE_URL, { attribution: TILE_ATTR, subdomains: 'abcd', maxZoom: 20 }).addTo(map);
         return map;
     }
