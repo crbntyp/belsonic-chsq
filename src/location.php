@@ -35,381 +35,205 @@ $festivalStmt = $db->prepare("SELECT * FROM festivals WHERE status = 'upcoming' 
 $festivalStmt->execute();
 $festival = $festivalStmt->fetch();
 
-// Function to extract plain text items from WYSIWYG HTML content
-function extractListItems($html) {
-    if (empty($html)) {
-        return [];
-    }
+// ---------------------------------------------------------------------------
+// Location sets (pubs & places to stay) — defined in data/locations.php.
+// Fixed reference data kept in code (the locations never change): no database
+// and no runtime geocoding, and it works even for venues not yet built out in
+// the backend. The set is chosen per request by domain, with a venue-name
+// fallback for local/dev (where the host is just "localhost").
+// ---------------------------------------------------------------------------
 
-    $items = [];
+$locationsConfig = [
+    // domain (without www) => location group
+    'domains' => [
+        'summerseriesbelfast.com' => 'custom-house-square',
+        'customhousesquare.com'   => 'custom-house-square',
+        'belsonic.com'            => 'belsonic',
+    ],
+    // fallback for localhost/unmapped hosts: match against the venue name
+    'venueKeywords' => [
+        'belsonic'     => 'belsonic',
+        'chsq'         => 'custom-house-square',
+        'custom house' => 'custom-house-square',
+        'summer'       => 'custom-house-square',
+    ],
+    'groups' => [
+        // Custom House Square — shared by The Summer Series + CHSQ
+        'custom-house-square' => [
+            'pubs' => [
+                ['name' => 'The Limelight',   'url' => 'http://www.limelightbelfast.com/',     'lat' => 54.5928895, 'lng' => -5.9285395],
+                ['name' => "McHugh's Bar",    'url' => 'https://www.facebook.com/mchughsbar/', 'lat' => 54.6009349, 'lng' => -5.9237855],
+                ['name' => 'Duke of York',    'url' => 'https://dukeofyorkbelfast.com/',       'lat' => 54.6017784, 'lng' => -5.9273238],
+                ['name' => 'The Garrick',     'url' => 'https://thegarrickbar.com/',           'lat' => 54.5972745, 'lng' => -5.9266170],
+                ['name' => 'The Dirty Onion', 'url' => 'https://thedirtyonion.com/',           'lat' => 54.6015803, 'lng' => -5.9264559],
+            ],
+            'accommodation' => [
+                ['name' => 'The Merchant',            'url' => 'https://www.themerchanthotel.com/',           'lat' => 54.6009401, 'lng' => -5.9254846],
+                ['name' => 'Bullitt Hotel',           'url' => 'https://bullitthotel.com/',                   'lat' => 54.5998320, 'lng' => -5.9252684],
+                ['name' => 'Clayton Hotel Belfast',   'url' => 'https://www.claytonhotelbelfast.com/',        'lat' => 54.5928336, 'lng' => -5.9301811],
+                ['name' => 'Malmaison Hotel Belfast', 'url' => 'https://www.malmaison.com/',                  'lat' => 54.5999869, 'lng' => -5.9239427],
+                ['name' => 'Radisson Blu',            'url' => 'https://www.radissonblu.com/en/hotel-belfast','lat' => 54.5908187, 'lng' => -5.9227438],
+                ['name' => 'Park Inn',                'url' => 'https://www.parkinn.co.uk/hotel-belfast',     'lat' => 54.5937416, 'lng' => -5.9319108],
+                ['name' => 'Premier Inn Alfred Street','url' => 'http://www.premierinn.com/',                 'lat' => 54.5936426, 'lng' => -5.9273408],
+            ],
+        ],
+        // Belsonic — Ormeau Park
+        'belsonic' => [
+            'pubs' => [
+                ['name' => 'The Limelight',       'url' => 'https://www.limelightbelfast.com/',            'lat' => 54.5928895, 'lng' => -5.9285395],
+                ['name' => 'The Pavilion Bar',    'url' => 'https://pavilionbelfast.com/',                 'lat' => 54.5765837, 'lng' => -5.9174087],
+                ['name' => 'The Errigle Bar',     'url' => 'https://errigle.com/',                         'lat' => 54.5760173, 'lng' => -5.9170110],
+                ['name' => 'Northern Lights Bar', 'url' => 'https://galwaybaybrewery.com/northernlights/', 'lat' => 54.5756000, 'lng' => -5.9173000],
+            ],
+            'accommodation' => [
+                ['name' => 'The Merchant',          'url' => 'https://www.themerchanthotel.com/',                                         'lat' => 54.6009401, 'lng' => -5.9254846],
+                ['name' => 'The Fitzwilliam Hotel', 'url' => 'https://www.fitzwilliamhotelbelfast.com/',                                  'lat' => 54.5956189, 'lng' => -5.9353351],
+                ['name' => 'Clayton Hotel',         'url' => 'https://www.claytonhotelbelfast.com/',                                      'lat' => 54.5928336, 'lng' => -5.9301811],
+                ['name' => 'Bullitt',               'url' => 'https://bullitthotel.com/',                                                 'lat' => 54.5998320, 'lng' => -5.9252684],
+                ['name' => 'AC Hotel Belfast',      'url' => 'https://www.marriott.com/en-gb/hotels/bfsac-ac-hotel-belfast/overview/',   'lat' => 54.6041913, 'lng' => -5.9205122],
+                ['name' => 'Radisson Blu',          'url' => 'https://radisson-blu.hotelsbelfastcity.com/en/',                            'lat' => 54.5908187, 'lng' => -5.9227438],
+                ['name' => 'Park Inn',              'url' => 'https://park-inn-by-radisson.hotelsbelfastcity.com/en/',                    'lat' => 54.5937416, 'lng' => -5.9319108],
+                ['name' => 'Holiday Inn Express',   'url' => 'https://www.ihg.com/holidayinnexpress/hotels/gb/en/belfast/bfsex/hoteldetail','lat' => 54.5865000, 'lng' => -5.9269000],
+                ['name' => "Ibis Queen's Quarter",  'url' => 'https://all.accor.com/hotel/7288/index.en.shtml',                           'lat' => 54.5859077, 'lng' => -5.9310025],
+            ],
+        ],
+    ],
+];
 
-    // Use DOMDocument to parse HTML
-    $dom = new DOMDocument();
-    libxml_use_internal_errors(true); // Suppress HTML parsing warnings
-    $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
-    libxml_clear_errors();
+$requestHost   = preg_replace('/^www\./', '', strtolower(preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'] ?? '')));
+$locationGroup = $locationsConfig['domains'][$requestHost] ?? null;
 
-    // Extract text from <li> elements
-    $listItems = $dom->getElementsByTagName('li');
-    foreach ($listItems as $li) {
-        $text = trim($li->textContent);
-        if (!empty($text)) {
-            $items[] = $text;
+if ($locationGroup === null) {
+    // Unmapped host (e.g. localhost): match against the current venue name
+    $venueNameLc = strtolower($venue['name'] ?? '');
+    foreach ($locationsConfig['venueKeywords'] as $keyword => $group) {
+        if ($keyword !== '' && strpos($venueNameLc, $keyword) !== false) {
+            $locationGroup = $group;
+            break;
         }
     }
-
-    // Extract text from <p> elements if no list items found
-    if (empty($items)) {
-        $paragraphs = $dom->getElementsByTagName('p');
-        foreach ($paragraphs as $p) {
-            $text = trim($p->textContent);
-            if (!empty($text)) {
-                $items[] = $text;
-            }
-        }
-    }
-
-    return $items;
 }
 
-// Function to extract links with text and href from WYSIWYG HTML content
-function extractLinks($html) {
-    if (empty($html)) {
-        return [];
-    }
+$locationSet = ($locationGroup !== null && isset($locationsConfig['groups'][$locationGroup]))
+    ? $locationsConfig['groups'][$locationGroup]
+    : ['pubs' => [], 'accommodation' => []];
 
-    $links = [];
+$pubsPlaces          = $locationSet['pubs'] ?? [];
+$accommodationPlaces = $locationSet['accommodation'] ?? [];
 
-    // Use DOMDocument to parse HTML
-    $dom = new DOMDocument();
-    libxml_use_internal_errors(true); // Suppress HTML parsing warnings
-    $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
-    libxml_clear_errors();
+// Derive the pill links and the map pins from the chosen set
+$toPillLink = function ($p) { return ['text' => $p['name'], 'href' => $p['url'] ?? '#']; };
+$hasCoords  = function ($p) { return isset($p['lat'], $p['lng']); };
 
-    // Extract <a> elements
-    $anchors = $dom->getElementsByTagName('a');
-    foreach ($anchors as $anchor) {
-        $text = trim($anchor->textContent);
-        $href = $anchor->getAttribute('href');
+$pubsLinks          = array_map($toPillLink, $pubsPlaces);
+$accommodationLinks = array_map($toPillLink, $accommodationPlaces);
+$pubsPins           = array_values(array_filter($pubsPlaces, $hasCoords));
+$accommodationPins  = array_values(array_filter($accommodationPlaces, $hasCoords));
 
-        if (!empty($text) && !empty($href)) {
-            $links[] = [
-                'text' => $text,
-                'href' => $href
-            ];
-        }
-    }
-
-    return $links;
-}
-
-// Initialize variables
-$pubsLinks = [];
-$accommodationLinks = [];
-
-// Generate dynamic map iframes for pubs and accommodation
-if ($venue) {
-    $venueName = $venue['name'];
-    $venueCity = $venue['city'] ?? 'Belfast';
-
-    // Check if custom pubs list exists
-    if (!empty($venue['pubs_list'])) {
-        $pubsList = extractListItems($venue['pubs_list']);
-        $pubsLinks = extractLinks($venue['pubs_list']);
-
-        if (!empty($pubsList) && !empty($venue['google_maps_api_key'])) {
-            // Use JavaScript API for multi-pin map
-            $pubsMapId = 'pubs-map-container';
-            $pubsMapHtml = '<div id="' . $pubsMapId . '" style="width:100%; height:450px; background: #f0f0f0;"></div>';
-
-            // Store locations for JavaScript
-            $pubsMapLocations = $pubsList;
-        } else if (!empty($pubsList)) {
-            // Fallback: Show general pubs area
-            $pubsQuery = urlencode("pubs and bars near {$venueName}, {$venueCity}");
-            $pubsMapHtml = '<iframe
-                src="https://www.google.com/maps?q=' . $pubsQuery . '&output=embed"
-                width="100%"
-                height="450"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>';
-        } else {
-            // Fallback to generic search
-            $pubsQuery = urlencode("bars and pubs near {$venueName}, {$venueCity}");
-            $pubsMapHtml = '<iframe
-                src="https://www.google.com/maps?q=' . $pubsQuery . '&output=embed"
-                width="100%"
-                height="450"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>';
-        }
-    } else {
-        // Fallback to generic search
-        $pubsQuery = urlencode("bars and pubs near {$venueName}, {$venueCity}");
-        $pubsMapHtml = '<iframe
-            src="https://www.google.com/maps?q=' . $pubsQuery . '&output=embed"
-            width="100%"
-            height="450"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>';
-    }
-
-    // Check if custom accommodation list exists
-    if (!empty($venue['accommodation_list'])) {
-        $accommodationList = extractListItems($venue['accommodation_list']);
-        $accommodationLinks = extractLinks($venue['accommodation_list']);
-
-        if (!empty($accommodationList) && !empty($venue['google_maps_api_key'])) {
-            // Use JavaScript API for multi-pin map
-            $accommodationMapId = 'accommodation-map-container';
-            $accommodationMapHtml = '<div id="' . $accommodationMapId . '" style="width:100%; height:450px; background: #f0f0f0;"></div>';
-
-            // Store locations for JavaScript
-            $accommodationMapLocations = $accommodationList;
-        } else if (!empty($accommodationList)) {
-            // Fallback: Show general hotels area
-            $accommodationQuery = urlencode("hotels near {$venueName}, {$venueCity}");
-            $accommodationMapHtml = '<iframe
-                src="https://www.google.com/maps?q=' . $accommodationQuery . '&output=embed"
-                width="100%"
-                height="450"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>';
-        } else {
-            // Fallback to generic search
-            $accommodationQuery = urlencode("hotels in {$venueCity} city centre");
-            $accommodationMapHtml = '<iframe
-                src="https://www.google.com/maps?q=' . $accommodationQuery . '&output=embed"
-                width="100%"
-                height="450"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>';
-        }
-    } else {
-        // Fallback to generic search
-        $accommodationQuery = urlencode("hotels in {$venueCity} city centre");
-        $accommodationMapHtml = '<iframe
-            src="https://www.google.com/maps?q=' . $accommodationQuery . '&output=embed"
-            width="100%"
-            height="450"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>';
-    }
-}
+$venueName   = $venue['name'] ?? 'the venue';
+$hasVenueGeo = !empty($venue['latitude']) && !empty($venue['longitude']);
 
 include 'includes/header.php';
 ?>
 
-<?php if (!empty($venue['google_maps_api_key'])): ?>
+<?php if ($hasVenueGeo || !empty($pubsPins) || !empty($accommodationPins)): ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-// Map configuration data
-window.mapConfig = {
-    apiKey: <?php echo json_encode($venue['google_maps_api_key']); ?>,
-    venueCenter: {lat: <?php echo $venue['latitude'] ?? '54.5973'; ?>, lng: <?php echo $venue['longitude'] ?? '-5.9301'; ?>},
-    venueName: <?php echo json_encode($venue['name'] ?? 'Venue'); ?>,
-    venueCity: <?php echo json_encode($venueCity); ?>,
-    pubsLocations: <?php echo json_encode($pubsMapLocations ?? []); ?>,
-    accommodationLocations: <?php echo json_encode($accommodationMapLocations ?? []); ?>
+// Map data — venue marker (if the venue has coords) + the location pins
+window.shineMapData = {
+    venue: <?php echo $hasVenueGeo
+        ? json_encode(['lat' => (float)$venue['latitude'], 'lng' => (float)$venue['longitude'], 'name' => $venue['name'] ?? 'Venue'])
+        : 'null'; ?>,
+    colors: {
+        primary: <?php echo json_encode($venue['primary_color'] ?? '#ff006f'); ?>,
+        secondary: <?php echo json_encode($venue['secondary_color'] ?? '#00ffff'); ?>
+    },
+    pubs: <?php echo json_encode($pubsPins); ?>,
+    accommodation: <?php echo json_encode($accommodationPins); ?>
 };
 
-// Dark theme style for Google Maps
-const darkMapStyle = [
-    { elementType: "geometry", stylers: [{ color: "#1a1a2e" }] },
-    { elementType: "labels.text.stroke", stylers: [{ color: "#1a1a2e" }] },
-    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-    { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-    { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-    { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
-    { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
-    { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
-    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-    { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
-    { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
-    { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
-    { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-    { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
-    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
-    { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
-];
+window.shineMaps = {};
 
-// Initialize maps when Google Maps API loads
-function initMaps() {
-    console.log('Initializing maps...', window.mapConfig);
+(function () {
+    var TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    var TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-    // Initialize venue map
-    const venueMapDiv = document.getElementById('venue-map-container');
-    if (venueMapDiv) {
-        console.log('Creating venue map...');
-        const venueMap = new google.maps.Map(venueMapDiv, {
-            zoom: 16,
-            center: window.mapConfig.venueCenter,
-            styles: darkMapStyle
-        });
-
-        // Add venue marker
-        const venueMarker = new google.maps.Marker({
-            map: venueMap,
-            position: window.mapConfig.venueCenter,
-            title: window.mapConfig.venueName || 'Venue',
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 12,
-                fillColor: '#ff006f',
-                fillOpacity: 1,
-                strokeColor: '#ffffff',
-                strokeWeight: 3
-            }
-        });
-
-        // Info window for venue
-        const venueInfoWindow = new google.maps.InfoWindow({
-            content: `
-                <div style="padding: 8px; background: #1a1a2e; color: white;">
-                    <h3 style="margin: 0 0 8px 0; font-size: 16px; color: white;">${window.mapConfig.venueName || 'Venue'}</h3>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${window.mapConfig.venueCenter.lat},${window.mapConfig.venueCenter.lng}"
-                       target="_blank"
-                       style="color: #ff006f; text-decoration: none; font-weight: 600; font-size: 14px;">
-                        Get Directions →
-                    </a>
-                </div>
-            `
-        });
-
-        venueMarker.addListener('click', () => {
-            venueInfoWindow.open(venueMap, venueMarker);
+    function pinIcon(color, size) {
+        return L.divIcon({
+            className: 'shine-pin',
+            html: '<span style="display:block;width:' + size + 'px;height:' + size + 'px;'
+                + 'border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:' + color + ';'
+                + 'border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);"></span>',
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size],
+            popupAnchor: [0, -size]
         });
     }
 
-    // Initialize pubs map
-    if (window.mapConfig.pubsLocations.length > 0) {
-        const pubsMapDiv = document.getElementById('pubs-map-container');
-        if (pubsMapDiv) {
-            console.log('Creating pubs map...');
-            const map = new google.maps.Map(pubsMapDiv, {
-                zoom: 14,
-                center: window.mapConfig.venueCenter,
-                styles: darkMapStyle
-            });
-            const geocoder = new google.maps.Geocoder();
-            const bounds = new google.maps.LatLngBounds();
-
-            window.mapConfig.pubsLocations.forEach((location) => {
-                geocoder.geocode({
-                    address: location + ', ' + window.mapConfig.venueCity
-                }, (results, status) => {
-                    if (status === 'OK' && results[0]) {
-                        const marker = new google.maps.Marker({
-                            map: map,
-                            position: results[0].geometry.location,
-                            title: location
-                        });
-
-                        // Create info window
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <div style="padding: 8px;">
-                                    <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1f2937;">${location}</h3>
-                                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">${results[0].formatted_address}</p>
-                                    <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(results[0].formatted_address)}"
-                                       target="_blank"
-                                       style="color: #ff6b35; text-decoration: none; font-weight: 600; font-size: 14px;">
-                                        Get Directions →
-                                    </a>
-                                </div>
-                            `
-                        });
-
-                        // Open info window on marker click
-                        marker.addListener('click', () => {
-                            infoWindow.open(map, marker);
-                        });
-
-                        bounds.extend(results[0].geometry.location);
-                        map.fitBounds(bounds);
-                    } else {
-                        console.error('Geocode failed for:', location, status);
-                    }
-                });
-            });
-        }
+    function popupHtml(name, url, lat, lng, color) {
+        var title = url
+            ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:#1a1a2e;text-decoration:none;">' + name + '</a>'
+            : name;
+        return '<div style="padding:6px 8px;min-width:150px;font-family:inherit;">'
+            + '<h3 style="margin:0 0 6px;font-size:15px;color:#1a1a2e;">' + title + '</h3>'
+            + '<a href="https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '" '
+            + 'target="_blank" rel="noopener" style="color:' + color + ';text-decoration:none;font-weight:700;font-size:13px;">Get Directions &rarr;</a>'
+            + '</div>';
     }
 
-    // Initialize accommodation map
-    if (window.mapConfig.accommodationLocations.length > 0) {
-        const accommodationMapDiv = document.getElementById('accommodation-map-container');
-        if (accommodationMapDiv) {
-            console.log('Creating accommodation map...');
-            const map = new google.maps.Map(accommodationMapDiv, {
-                zoom: 14,
-                center: window.mapConfig.venueCenter,
-                styles: darkMapStyle
-            });
-            const geocoder = new google.maps.Geocoder();
-            const bounds = new google.maps.LatLngBounds();
-
-            window.mapConfig.accommodationLocations.forEach((location) => {
-                geocoder.geocode({
-                    address: location + ', ' + window.mapConfig.venueCity
-                }, (results, status) => {
-                    if (status === 'OK' && results[0]) {
-                        const marker = new google.maps.Marker({
-                            map: map,
-                            position: results[0].geometry.location,
-                            title: location
-                        });
-
-                        // Create info window
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <div style="padding: 8px;">
-                                    <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1f2937;">${location}</h3>
-                                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">${results[0].formatted_address}</p>
-                                    <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(results[0].formatted_address)}"
-                                       target="_blank"
-                                       style="color: #ff6b35; text-decoration: none; font-weight: 600; font-size: 14px;">
-                                        Get Directions →
-                                    </a>
-                                </div>
-                            `
-                        });
-
-                        // Open info window on marker click
-                        marker.addListener('click', () => {
-                            infoWindow.open(map, marker);
-                        });
-
-                        bounds.extend(results[0].geometry.location);
-                        map.fitBounds(bounds);
-                    } else {
-                        console.error('Geocode failed for:', location, status);
-                    }
-                });
-            });
-        }
+    function makeMap(id, center, zoom) {
+        var map = L.map(id, { scrollWheelZoom: false }).setView(center, zoom);
+        L.tileLayer(TILE_URL, { attribution: TILE_ATTR, subdomains: 'abcd', maxZoom: 20 }).addTo(map);
+        return map;
     }
-}
+
+    function addVenueMarker(map) {
+        var v = window.shineMapData.venue;
+        if (!v) return;
+        var c = window.shineMapData.colors.primary;
+        L.marker([v.lat, v.lng], { icon: pinIcon(c, 24) })
+            .addTo(map)
+            .bindPopup(popupHtml(v.name, null, v.lat, v.lng, c));
+    }
+
+    function initVenueMap() {
+        var v = window.shineMapData.venue;
+        if (!v || !document.getElementById('venue-map-container')) return;
+        var map = makeMap('venue-map-container', [v.lat, v.lng], 16);
+        addVenueMarker(map);
+        window.shineMaps['venue'] = map;
+    }
+
+    function initListMap(id, pins) {
+        if (!document.getElementById(id) || !pins.length) return;
+        var v = window.shineMapData.venue;
+        var c = window.shineMapData.colors.secondary;
+        var center = v ? [v.lat, v.lng] : [pins[0].lat, pins[0].lng];
+        var map = makeMap(id, center, 14);
+        var bounds = [];
+        if (v) { addVenueMarker(map); bounds.push([v.lat, v.lng]); }
+        pins.forEach(function (p) {
+            L.marker([p.lat, p.lng], { icon: pinIcon(c, 18) })
+                .addTo(map)
+                .bindPopup(popupHtml(p.name, p.url, p.lat, p.lng, c));
+            bounds.push([p.lat, p.lng]);
+        });
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+        map._shineBounds = bounds; // re-fit after the tab becomes visible
+        window.shineMaps[id] = map;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof L === 'undefined') { console.error('Leaflet failed to load'); return; }
+        initVenueMap();
+        initListMap('pubs-map-container', window.shineMapData.pubs);
+        initListMap('accommodation-map-container', window.shineMapData.accommodation);
+    });
+})();
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo htmlspecialchars($venue['google_maps_api_key']); ?>&callback=initMaps&v=weekly" async></script>
 <?php endif; ?>
 
 <script>
@@ -437,13 +261,13 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                 <i class="las la-map-marker"></i>
                 Venue Location
             </button>
-            <?php if (!empty($venue['pubs_list']) || !empty($pubsMapHtml)): ?>
+            <?php if (!empty($pubsPlaces)): ?>
             <button class="location-dropdown-item" data-tab="pubs">
                 <i class="las la-beer"></i>
                 Pubs & Bars
             </button>
             <?php endif; ?>
-            <?php if (!empty($venue['accommodation_list']) || !empty($accommodationMapHtml)): ?>
+            <?php if (!empty($accommodationPlaces)): ?>
             <button class="location-dropdown-item" data-tab="accommodation">
                 <i class="las la-hotel"></i>
                 Places to Stay
@@ -458,13 +282,13 @@ window.basePath = '<?php echo BASE_PATH; ?>';
             <i class="las la-map-marker"></i>
             Venue Location
         </button>
-        <?php if (!empty($venue['pubs_list']) || !empty($pubsMapHtml)): ?>
+        <?php if (!empty($pubsPlaces)): ?>
         <button class="location-tab" data-tab="pubs">
             <i class="las la-beer"></i>
             Pubs & Bars
         </button>
         <?php endif; ?>
-        <?php if (!empty($venue['accommodation_list']) || !empty($accommodationMapHtml)): ?>
+        <?php if (!empty($accommodationPlaces)): ?>
         <button class="location-tab" data-tab="accommodation">
             <i class="las la-hotel"></i>
             Places to Stay
@@ -474,7 +298,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
     <!-- Venue Tab -->
     <div class="tab-content active" id="venue-tab">
-        <?php if (!empty($venue['google_maps_api_key'])): ?>
+        <?php if ($hasVenueGeo): ?>
         <section class="map">
             <div id="venue-map-container" style="width:100%; height:450px;"></div>
         </section>
@@ -487,13 +311,12 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
     <!-- Pubs Tab -->
     <div class="tab-content" id="pubs-tab">
-        <?php if (!empty($pubsMapHtml)): ?>
+        <?php if (!empty($pubsPins)): ?>
         <section class="map">
-            <?php echo $pubsMapHtml; ?>
+            <div id="pubs-map-container" style="width:100%; height:450px;"></div>
         </section>
         <?php endif; ?>
 
-        <!-- DEBUG: <?php echo 'pubsLinks count: ' . count($pubsLinks); ?> -->
         <?php if (!empty($pubsLinks)): ?>
         <section class="location-pills">
             <?php foreach ($pubsLinks as $link): ?>
@@ -503,20 +326,17 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                 </a>
             <?php endforeach; ?>
         </section>
-        <?php else: ?>
-        <!-- DEBUG: No pubs links found. Raw data length: <?php echo strlen($venue['pubs_list'] ?? ''); ?> -->
         <?php endif; ?>
     </div>
 
     <!-- Accommodation Tab -->
     <div class="tab-content" id="accommodation-tab">
-        <?php if (!empty($accommodationMapHtml)): ?>
+        <?php if (!empty($accommodationPins)): ?>
         <section class="map">
-            <?php echo $accommodationMapHtml; ?>
+            <div id="accommodation-map-container" style="width:100%; height:450px;"></div>
         </section>
         <?php endif; ?>
 
-        <!-- DEBUG: <?php echo 'accommodationLinks count: ' . count($accommodationLinks); ?> -->
         <?php if (!empty($accommodationLinks)): ?>
         <section class="location-pills">
             <?php foreach ($accommodationLinks as $link): ?>
@@ -526,8 +346,6 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                 </a>
             <?php endforeach; ?>
         </section>
-        <?php else: ?>
-        <!-- DEBUG: No accommodation links found. Raw data length: <?php echo strlen($venue['accommodation_list'] ?? ''); ?> -->
         <?php endif; ?>
     </div>
 </div>
@@ -569,6 +387,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update content
         tabContents.forEach(content => content.classList.remove('active'));
         document.getElementById(tabName + '-tab').classList.add('active');
+
+        // Leaflet maps must recalculate size + re-fit bounds once their tab is visible
+        if (window.shineMaps) {
+            const mapKey = tabName === 'venue' ? 'venue' : (tabName + '-map-container');
+            const map = window.shineMaps[mapKey];
+            if (map) setTimeout(function () {
+                map.invalidateSize();
+                if (map._shineBounds) map.fitBounds(map._shineBounds, { padding: [40, 40], maxZoom: 15 });
+            }, 60);
+        }
     }
 
     // Desktop tab click handlers
