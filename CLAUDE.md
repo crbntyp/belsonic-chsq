@@ -10,8 +10,18 @@ established failure mode, not a hypothetical.
 
 ### Deploy targets — TWO. crbntyp is STAGING for the client site.
 
-**The order is not optional.** Client changes go to ours first, get checked,
-and only then go to the client. Never deploy straight to the client.
+**The order is not optional. Never deploy straight to the client.**
+
+Every piece of work on this project, no matter how small, goes:
+
+1. **Build and test locally.**
+2. **`scripts/deploy-crbntyp.sh`** → our VPS at `/var/www/crbntyp/blsnc/`.
+3. **Check it on crbntyp** — https://crbntyp.com/blsnc/. Get it right here.
+   This is the staging environment. All iteration happens at this step.
+4. **Sign-off.** Jonny confirms it is good to go. Do not skip or assume this.
+5. **`scripts/deploy-client.sh --live`** → FTPS to the client's shine.net server.
+
+If you are ever unsure which step you are on, you are on step 3.
 
 | # | Target | How | Credentials |
 |---|--------|-----|-------------|
@@ -26,7 +36,9 @@ already holds `index.php`, `accessibility.php`, `tickets.php`, `transport.php`,
 `dist/*` → remote root. There is no `dist/` folder on the far side.
 
 **FTPS with explicit TLS, confirmed** — the server is ProFTPD and accepts
-`AUTH SSL`, negotiating TLSv1.2.
+`AUTH SSL`, negotiating TLSv1.2. The account **owns** the files it would be
+replacing (`-rw-r--r-- jonny_shinefestivals psacln`), so writes will work.
+No upload has actually been run yet, so watch the first one.
 
 **Connect to `mail.shine.net`, not `ftp.shine.net`.** The server presents a
 valid Let's Encrypt certificate for `CN=mail.shine.net` with **no SAN**, so
@@ -42,13 +54,6 @@ only because `.htaccess` denies `^\.env`; the client's server may not.
 
 Cruft noted on the client server, left alone: `db-test.php`, `index-bk.html`,
 `holding-2025/`. Most files date from Nov/Dec 2025, `location.php` from June.
-
-Workflow for a client request:
-
-1. Make the change locally.
-2. `scripts/deploy-crbntyp.sh` — deploy to ours.
-3. Check it on crbntyp. Get it right here.
-4. Only when happy: `scripts/deploy-client.sh` — FTPS to the client.
 
 Nothing in the codebase has ever read `FTP_HOST`/`FTP_USER`/`FTP_PASS`; they sat
 in `.env` unused until these scripts. `.env.example` still has no FTP section.
