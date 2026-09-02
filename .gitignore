@@ -78,3 +78,4 @@ database/config.php
 *.tmp
 *.temp
 .env
+CLAUDE.md.bak-*

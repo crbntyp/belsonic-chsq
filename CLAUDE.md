@@ -1,4 +1,84 @@
-# Shine Festivals - Codebase Architecture
+# Shine Festivals
+
+## Read this before anything else
+
+**This is NOT `shine.net/belsonic`.** Two projects here answer to "shine" and
+"belsonic". This one is the multi-venue CMS that deploys to crbntyp `/blsnc/`.
+`shine.net/belsonic` is the live www.belsonic.com client site — different
+folder, different container, different FTP account. Confusing the two is the
+established failure mode, not a hypothetical.
+
+### Deploy targets — TWO. crbntyp is STAGING for the client site.
+
+**The order is not optional.** Client changes go to ours first, get checked,
+and only then go to the client. Never deploy straight to the client.
+
+| # | Target | How | Credentials |
+|---|--------|-----|-------------|
+| 1 | **Ours / staging** — crbntyp | `rsync` to `/var/www/crbntyp/blsnc/` as root | VPS key |
+| 2 | **Client / live** | FTPS to `ftp.shine.net` | `.env` → `FTP_USER=jonny_shinefestivals` |
+
+Target 2 lands **directly in the root of the folder that account is scoped to**.
+Verified by connecting 2 Sep 2026: the landing directory is the site root and
+already holds `index.php`, `accessibility.php`, `tickets.php`, `transport.php`,
+`venue.php`, `info.php`, `location.php`, plus `admin/`, `includes/`, `styles/`,
+`fonts/`, `img/`, `scripts/`. So the payload is the *contents* of `dist/` —
+`dist/*` → remote root. There is no `dist/` folder on the far side.
+
+**FTPS with explicit TLS, confirmed** — the server is ProFTPD and accepts
+`AUTH SSL`, negotiating TLSv1.2.
+
+**Connect to `mail.shine.net`, not `ftp.shine.net`.** The server presents a
+valid Let's Encrypt certificate for `CN=mail.shine.net` with **no SAN**, so
+connecting as `ftp.shine.net` fails verification (curl exit 60) even though
+nothing is wrong with the cert. `deploy-client.sh` probes for this and uses the
+matching hostname so TLS is properly verified; it only falls back to `-k` —
+loudly — if that host is unreachable. Do not reach for `-k` by default.
+
+**Never ship `.env`.** The build copies it into `dist/`, and it holds both DB
+passwords, `ADMIN_PASSWORD`, the Mapbox token and this FTP password. Both
+scripts exclude `.env*`, `*.sql` and `*.md`. crbntyp survives a past leak of it
+only because `.htaccess` denies `^\.env`; the client's server may not.
+
+Cruft noted on the client server, left alone: `db-test.php`, `index-bk.html`,
+`holding-2025/`. Most files date from Nov/Dec 2025, `location.php` from June.
+
+Workflow for a client request:
+
+1. Make the change locally.
+2. `scripts/deploy-crbntyp.sh` — deploy to ours.
+3. Check it on crbntyp. Get it right here.
+4. Only when happy: `scripts/deploy-client.sh` — FTPS to the client.
+
+Nothing in the codebase has ever read `FTP_HOST`/`FTP_USER`/`FTP_PASS`; they sat
+in `.env` unused until these scripts. `.env.example` still has no FTP section.
+
+### The database is LOCKED
+
+No schema changes, no migrations, no writes. Treat it read-only. This is a
+client system. The `migrations/` folder and the "Future Enhancements" list
+further down this file are history, not an invitation.
+
+Two databases are configured in `.env`: `LOCAL_DB_*` (crbntyp) and
+`PROD_DB_*` (the client's live one). The lock applies to both.
+
+### Local dev
+
+There is **no PHP on this machine**. `npm run serve` will not work.
+Local dev is the `shine-festivals-web` container (php:8.1-apache, port 8080),
+currently stopped — `docker start shine-festivals-web`.
+Port 8080 is also claimed by `definitive-leagues-php-1`; only one at a time.
+
+### Housekeeping
+
+- Parked on branch `fix/location-leaflet-maps`, not master.
+- **This file is tracked in git.** Never put credentials in it.
+- `.env` is gitignored. `.env.example` has no FTP section — update it if the
+  FTP setup is ever formalised.
+
+---
+
+## Codebase Architecture
 
 ## Application Type
 
@@ -329,7 +409,7 @@ include 'includes/header.php';
 
 **Authentication:**
 - Simple session-based auth in `admin/auth.php`
-- Credentials: username='admin', password='admin123' (hardcoded for dev)
+- Credentials: see `.env` (`ADMIN_USERNAME` / `ADMIN_PASSWORD`). Not recorded here — this file is tracked.
 - All admin pages check `$_SESSION['admin_logged_in']`
 - Logout destroys session
 
@@ -592,7 +672,7 @@ open http://localhost:8080/index.php
 
 # 6. Admin panel
 open http://localhost:8080/admin/login.php
-# Login: admin / admin123
+# Login: credentials are in .env, not in this file
 ```
 
 ## Key Takeaways
