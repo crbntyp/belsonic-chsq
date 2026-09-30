@@ -112,6 +112,15 @@ function asset_url($path) {
 }
 
 /**
+ * asset_url() plus ?v=<file mtime>, for our own CSS/JS. The servers send no
+ * cache headers, so without it browsers keep an old main.css for weeks.
+ */
+function versioned_asset_url($path) {
+    $mtime = @filemtime(__DIR__ . '/../' . ltrim($path, '/'));
+    return asset_url($path) . ($mtime ? '?v=' . $mtime : '');
+}
+
+/**
  * Helper function for admin URLs with base path
  */
 function admin_url($path = '') {

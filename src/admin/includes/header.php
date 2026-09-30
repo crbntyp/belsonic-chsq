@@ -32,7 +32,7 @@ if (!isset($venueBackgrounds)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>Admin</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo versioned_asset_url('styles/main.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset_url('admin/admin.css'); ?>">
     <script>
     // Pass venue background images to JavaScript
@@ -42,7 +42,7 @@ if (!isset($venueBackgrounds)) {
     // Pass base path for asset URLs
     window.basePath = '<?php echo BASE_PATH; ?>';
     </script>
-    <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
+    <script src="<?php echo versioned_asset_url('scripts/main.js'); ?>" defer></script>
     <script>
     // Admin Mobile Menu Toggle
     document.addEventListener('DOMContentLoaded', function() {

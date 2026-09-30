@@ -29,7 +29,7 @@ if (isLoggedIn()) {
     <meta name="robots" content="noindex, nofollow" />
     <title>Admin Login</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo versioned_asset_url('styles/main.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset_url('admin/admin.css'); ?>?v=<?php echo time(); ?>">
 </head>
 <body class="admin-login">

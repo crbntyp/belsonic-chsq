@@ -35,7 +35,7 @@ $ogBasePath = (strpos($venueDomainClean, 'crbntyp.com') !== false) ? BASE_PATH :
     <meta property="og:type" content="website">
     <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' ' . festival_year(); ?> | Belfast's Premier Music Festival</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo versioned_asset_url('styles/main.css'); ?>">
     <style>
     /* Dynamic venue colors */
     :root {
@@ -43,7 +43,7 @@ $ogBasePath = (strpos($venueDomainClean, 'crbntyp.com') !== false) ? BASE_PATH :
         --venue-color-secondary: <?php echo $venueSecondaryColor; ?>;
     }
     </style>
-    <script src="<?php echo asset_url('scripts/main.js'); ?>" defer></script>
+    <script src="<?php echo versioned_asset_url('scripts/main.js'); ?>" defer></script>
 </head>
 <body>
     <!-- Burger Menu - positioned outside containers for proper absolute positioning -->
