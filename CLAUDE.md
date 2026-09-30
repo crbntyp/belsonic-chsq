@@ -30,11 +30,16 @@ credential this project has. Both scripts exclude `.env*`, `*.sql`, `*.md`.
 
 ## Branch, build, local dev
 
-Branch `fix/location-leaflet-maps`, not master. `npm run build` is sass + cpx
-copies, not a bundler. **There is no PHP on this machine** — `npm run serve`
-cannot work. Local dev is `docker start shine-festivals-web` (php:8.1-apache,
-port 8080, currently stopped). Port 8080 is also claimed by
-`definitive-leagues-php-1`; only one can run.
+Branch is `master` (the Leaflet work was merged back 30 Sep 2026). `npm run
+build` is sass + cpx copies, not a bundler. **There is no PHP on this
+machine** — `npm run serve` cannot work. Local dev is `docker start
+shine-festivals-db shine-festivals-web` (php:8.1-apache on 8080, MySQL on
+3307), opened at **http://127.0.0.1:8080/** — `localhost` can resolve to
+another app's dev server. Port 8080 is also claimed by `dl-php-1` and 3307
+by `gldtw-db`; stop those first.
+
+`main.css` is linked without a version string and the server sends no cache
+headers, so after a CSS change hard-reload before judging it.
 
 ## Landmines
 
