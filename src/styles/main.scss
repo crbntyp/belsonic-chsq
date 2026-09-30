@@ -1159,6 +1159,88 @@ img {
   }
 }
 
+// Map popups (Leaflet, location page) — soft glass panel, like the location pills
+.leaflet-popup.shine-popup {
+  .leaflet-popup-content-wrapper {
+    background: rgba(18, 18, 24, 0.88);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .leaflet-popup-content {
+    margin: 12px 14px;
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .leaflet-popup-tip {
+    background: rgba(18, 18, 24, 0.88);
+    box-shadow: none;
+  }
+
+  // Leaflet colours every link #0078A8; let the popup's own components decide
+  a {
+    color: inherit;
+  }
+
+  a.leaflet-popup-close-button {
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.shine-popup-title {
+  margin: 0 0 6px;
+  padding-right: 16px; // clear of the close button
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+
+  a {
+    text-decoration: none;
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--venue-color-secondary);
+    }
+  }
+
+  i {
+    font-size: 13px;
+    opacity: 0.6;
+  }
+}
+
+.shine-popup-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+
+  // 0,3,0 — must outrank the popup's `.leaflet-popup.shine-popup a` reset (0,2,1)
+  .leaflet-popup.shine-popup & {
+    color: var(--venue-color-secondary);
+  }
+
+  i {
+    font-size: 15px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .accessibility-intro, .transport-intro {
   max-width: 800px;
   margin: 0 auto var(--spacing-xl);

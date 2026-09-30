@@ -141,6 +141,15 @@ include 'includes/header.php';
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- OpenFreeMap serves vector tiles only, so MapLibre draws them and the bridge
+     keeps it an ordinary Leaflet layer. maplibre-gl is pinned to v5: on v6 the
+     bridge builds a map that never requests a tile, with no error. -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css"
+      integrity="sha384-uTttxo/aOKbdE5RlD/SPzSDoDmNvGlUYPjONi2MN/b7c9HPSvW07OIuyP7uL6jxK" crossorigin="" />
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"
+        integrity="sha384-5+cfbwT0iiub6VsQAdn6yz16nr6sDiQoHx6tm4O8OVYXHYOxcffFmCJBL0dgdvGp" crossorigin=""></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"
+        integrity="sha384-tXYNKOHx4T02jMP7YYCtBxPIv1B5gaA5mcVPBzqMp6d7VzWzxJgI2aWF/nJLrQdS" crossorigin=""></script>
 <script>
 // Map data — venue marker (if the venue has coords) + the location pins
 window.shineMapData = {
@@ -158,8 +167,9 @@ window.shineMapData = {
 window.shineMaps = {};
 
 (function () {
-    var TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-    var TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+    // CARTO's Dark Matter style, served by OpenFreeMap — no key, no account, no quota
+    var STYLE_URL = 'https://tiles.openfreemap.org/styles/dark';
+    var TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://openfreemap.org/">OpenFreeMap</a>';
 
     function pinIcon(color, size) {
         return L.divIcon({
@@ -173,23 +183,33 @@ window.shineMaps = {};
         });
     }
 
-    function popupHtml(name, url, lat, lng, color) {
+    // Styled by .shine-popup in main.scss (themed like the lineup cards)
+    var POPUP_OPTS = { className: 'shine-popup', minWidth: 160, maxWidth: 240 };
+
+    function popupHtml(name, url, lat, lng) {
         var title = url
-            ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:#1a1a2e;text-decoration:none;">' + name + '</a>'
+            ? '<a href="' + url + '" target="_blank" rel="noopener">' + name + ' <i class="las la-external-link-alt"></i></a>'
             : name;
-        return '<div style="padding:6px 8px;min-width:150px;font-family:inherit;">'
-            + '<h3 style="margin:0 0 6px;font-size:15px;color:#1a1a2e;">' + title + '</h3>'
-            + '<a href="https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '" '
-            + 'target="_blank" rel="noopener" style="color:' + color + ';text-decoration:none;font-weight:700;font-size:13px;">Get Directions &rarr;</a>'
-            + '</div>';
+        return '<h3 class="shine-popup-title">' + title + '</h3>'
+            + '<a class="shine-popup-link" href="https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '" '
+            + 'target="_blank" rel="noopener"><i class="las la-directions"></i> Get directions</a>';
     }
 
     function makeMap(id, center, zoom) {
         var map = L.map(id, { scrollWheelZoom: false }).setView(center, zoom);
         // Drop Leaflet's default prefix (it includes a Ukrainian flag); keep only
-        // the required OpenStreetMap/CARTO tile attribution.
+        // the required OpenStreetMap/OpenFreeMap attribution.
         map.attributionControl.setPrefix(false);
-        L.tileLayer(TILE_URL, { attribution: TILE_ATTR, subdomains: 'abcd', maxZoom: 20 }).addTo(map);
+        var gl = L.maplibreGL({ style: STYLE_URL, attribution: TILE_ATTR }).addTo(map);
+        // MapLibre measures its container once. The pubs/stay maps are built
+        // inside hidden tabs (zero size), so resize it whenever the box changes
+        // or it stays blank after the tab opens.
+        if (window.ResizeObserver) {
+            new ResizeObserver(function () {
+                var glMap = gl.getMaplibreMap && gl.getMaplibreMap();
+                if (glMap) glMap.resize();
+            }).observe(document.getElementById(id));
+        }
         return map;
     }
 
@@ -199,7 +219,7 @@ window.shineMaps = {};
         var c = window.shineMapData.colors.primary;
         L.marker([v.lat, v.lng], { icon: pinIcon(c, 24) })
             .addTo(map)
-            .bindPopup(popupHtml(v.name, null, v.lat, v.lng, c));
+            .bindPopup(popupHtml(v.name, null, v.lat, v.lng), POPUP_OPTS);
     }
 
     function initVenueMap() {
@@ -221,7 +241,7 @@ window.shineMaps = {};
         pins.forEach(function (p) {
             L.marker([p.lat, p.lng], { icon: pinIcon(c, 18) })
                 .addTo(map)
-                .bindPopup(popupHtml(p.name, p.url, p.lat, p.lng, c));
+                .bindPopup(popupHtml(p.name, p.url, p.lat, p.lng), POPUP_OPTS);
             bounds.push([p.lat, p.lng]);
         });
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
@@ -231,6 +251,7 @@ window.shineMaps = {};
 
     document.addEventListener('DOMContentLoaded', function () {
         if (typeof L === 'undefined') { console.error('Leaflet failed to load'); return; }
+        if (typeof L.maplibreGL === 'undefined') { console.error('MapLibre/Leaflet bridge failed to load'); return; }
         initVenueMap();
         initListMap('pubs-map-container', window.shineMapData.pubs);
         initListMap('accommodation-map-container', window.shineMapData.accommodation);
