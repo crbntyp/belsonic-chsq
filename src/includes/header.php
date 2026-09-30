@@ -33,7 +33,7 @@ $ogBasePath = (strpos($venueDomainClean, 'crbntyp.com') !== false) ? BASE_PATH :
     <meta property="og:image" content="https://<?php echo htmlspecialchars($venueDomainClean); ?><?php echo $ogBasePath; ?>/img/assets/og-<?php echo $venueSlug; ?>.jpg">
     <meta property="og:url" content="https://<?php echo htmlspecialchars($venueDomainClean); ?><?php echo $ogBasePath; ?>">
     <meta property="og:type" content="website">
-    <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' 2026'; ?> | Belfast's Premier Music Festival</title>
+    <title><?php echo isset($pageTitle) ? $pageTitle : $venueName . ' ' . festival_year(); ?> | Belfast's Premier Music Festival</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href="<?php echo asset_url('styles/main.css'); ?>">
     <style>

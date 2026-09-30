@@ -121,6 +121,45 @@ function admin_url($path = '') {
 }
 
 /**
+ * The season year the site promotes (e.g. "Lineup 2027").
+ *
+ * Taken from the upcoming festival, and moved on a year once its last show
+ * (the later of end_date and its final performance) has passed — so the site
+ * rolls over to next season without anyone editing a festival row. Never
+ * earlier than the calendar year. Looked up once per request.
+ */
+function festival_year() {
+    static $year = null;
+    if ($year !== null) {
+        return $year;
+    }
+
+    $year = (int) date('Y');
+    $stmt = getDB()->prepare("
+        SELECT f.start_date,
+               GREATEST(COALESCE(f.end_date, f.start_date),
+                        COALESCE(MAX(p.performance_date), f.start_date)) AS last_date
+        FROM festivals f
+        LEFT JOIN performances p ON p.festival_id = f.id
+        WHERE f.status = 'upcoming'
+        GROUP BY f.id, f.start_date, f.end_date
+        ORDER BY f.start_date
+        LIMIT 1
+    ");
+    $stmt->execute();
+    $festival = $stmt->fetch();
+
+    if ($festival && !empty($festival['start_date'])) {
+        $season = (int) date('Y', strtotime($festival['start_date']));
+        if (date('Y-m-d') > $festival['last_date']) {
+            $season++;
+        }
+        $year = max($year, $season);
+    }
+    return $year;
+}
+
+/**
  * Venue Configuration
  * Dynamically detects venue based on domain from database
  */

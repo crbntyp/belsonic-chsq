@@ -126,7 +126,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
                     Accessible Parking
                 </h3>
                 <p><strong>For Accessible Ticket Holders Only</strong></p>
-                <p>We are currently putting plans in place for 2026. Accessible ticket holders will be contacted closer to the event date with information.</p>
+                <p>We are currently putting plans in place for <?php echo festival_year(); ?>. Accessible ticket holders will be contacted closer to the event date with information.</p>
                 <p>If you have any other accessible queries please contact us on <a href="mailto:accessibility@<?php echo htmlspecialchars($venueDomain); ?>">accessibility@<?php echo htmlspecialchars($venueDomain); ?></a></p>
             </div>
 

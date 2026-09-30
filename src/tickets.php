@@ -58,7 +58,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
     <header class="page-header">
         <h1>Tickets & Pricing</h1>
-        <p class="subtitle">Get your tickets for <?php echo htmlspecialchars($venue['name'] ?? 'Festival'); ?> 2026</p>
+        <p class="subtitle">Get your tickets for <?php echo htmlspecialchars($venue['name'] ?? 'Festival'); ?> <?php echo festival_year(); ?></p>
     </header>
 
     <section class="ticket-types">

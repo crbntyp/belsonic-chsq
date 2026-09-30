@@ -83,7 +83,7 @@ window.basePath = '<?php echo BASE_PATH; ?>';
 
     <section class="lineup">
         <div class="lineup-header">
-            <h2><?php echo htmlspecialchars($venue['name'] ?? 'Festival'); ?> Lineup 2026</h2>
+            <h2><?php echo htmlspecialchars($venue['name'] ?? 'Festival'); ?> Lineup <?php echo festival_year(); ?></h2>
             <?php include 'includes/social-links.php'; ?>
         </div>
         <div class="shows-grid">
