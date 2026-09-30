@@ -121,12 +121,18 @@ function admin_url($path = '') {
 }
 
 /**
+ * Month the site starts promoting next year's season (9 = 1 September).
+ */
+define('SEASON_ROLLOVER_MONTH', 9);
+
+/**
  * The season year the site promotes (e.g. "Lineup 2027").
  *
- * Taken from the upcoming festival, and moved on a year once its last show
- * (the later of end_date and its final performance) has passed — so the site
- * rolls over to next season without anyone editing a festival row. Never
- * earlier than the calendar year. Looked up once per request.
+ * A calendar rule, not the festival row: from SEASON_ROLLOVER_MONTH it is next
+ * year's season. The DB is read-only to us and the admin cannot edit festival
+ * dates, so a rule that waited on a festival row could not be moved on. An
+ * upcoming festival dated later still wins (a 2028 row shows 2028), it just
+ * cannot hold the year back. Looked up once per request.
  */
 function festival_year() {
     static $year = null;
@@ -134,27 +140,13 @@ function festival_year() {
         return $year;
     }
 
-    $year = (int) date('Y');
-    $stmt = getDB()->prepare("
-        SELECT f.start_date,
-               GREATEST(COALESCE(f.end_date, f.start_date),
-                        COALESCE(MAX(p.performance_date), f.start_date)) AS last_date
-        FROM festivals f
-        LEFT JOIN performances p ON p.festival_id = f.id
-        WHERE f.status = 'upcoming'
-        GROUP BY f.id, f.start_date, f.end_date
-        ORDER BY f.start_date
-        LIMIT 1
-    ");
-    $stmt->execute();
-    $festival = $stmt->fetch();
+    $year = (int) date('Y') + ((int) date('n') >= SEASON_ROLLOVER_MONTH ? 1 : 0);
 
-    if ($festival && !empty($festival['start_date'])) {
-        $season = (int) date('Y', strtotime($festival['start_date']));
-        if (date('Y-m-d') > $festival['last_date']) {
-            $season++;
-        }
-        $year = max($year, $season);
+    $stmt = getDB()->prepare("SELECT MAX(start_date) FROM festivals WHERE status = 'upcoming'");
+    $stmt->execute();
+    $start = $stmt->fetchColumn();
+    if ($start) {
+        $year = max($year, (int) date('Y', strtotime($start)));
     }
     return $year;
 }
