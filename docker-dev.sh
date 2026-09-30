@@ -3,7 +3,7 @@
 # Shine Festivals - Docker Development Script
 # This script manages the Docker container with volume mounting for development
 
-PROJECT_DIR="/Users/carbontype/Documents/Engineering/crbntyp/shine festivals"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONTAINER_NAME="shine-festivals-web"
 IMAGE_NAME="shine-festivals"
 

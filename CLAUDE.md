@@ -1,5 +1,10 @@
 # shine festivals
 
+Local folder is `summer series/` (renamed from `shine festivals/` 30 Sep 2026,
+folder only). The project, repo, containers, Compose project (`shinefestivals`,
+pinned by `name:` in docker-compose.yml), stts slug `blsnc` and FTP account
+all keep their shine names.
+
 ## This is NOT `shine.net/belsonic`
 
 Two projects answer to "shine"/"belsonic". This one is the multi-venue CMS
@@ -37,6 +42,11 @@ shine-festivals-db shine-festivals-web` (php:8.1-apache on 8080, MySQL on
 3307), opened at **http://127.0.0.1:8080/** — `localhost` can resolve to
 another app's dev server. Port 8080 is also claimed by `dl-php-1` and 3307
 by `gldtw-db`; stop those first.
+
+The web container bind-mounts `dist/` by **absolute path**, fixed when the
+container was created. If the folder ever moves or is renamed again,
+`docker start` will serve an empty dir — recreate instead with
+`docker compose up -d --force-recreate web`.
 
 `main.css` is linked without a version string and the server sends no cache
 headers, so after a CSS change hard-reload before judging it.

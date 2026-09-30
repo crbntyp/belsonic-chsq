@@ -1,5 +1,10 @@
 version: '3.8'
 
+# Pinned so the project no longer follows the folder name. Without this, renaming
+# the folder (shine festivals -> summer series, 30 Sep 2026) makes Compose look
+# for a new empty volume and the local DB appears wiped. Do not remove.
+name: shinefestivals
+
 services:
   web:
     image: php:8.1-apache
