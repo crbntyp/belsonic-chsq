@@ -702,17 +702,19 @@ img {
       opacity: 0.7;
     }
 
+    // Inline SVG wordmark (cut baked into the outlines) — fill is currentColor
     .app-credit-logo {
-      font-family: "Britanica", Arial, sans-serif;
-      font-size: 24px;
-      font-weight: 800;
+      display: block;
+      width: 78px; // same footprint as the old 24px text mark
       color: white;
-      clip-path: inset(0 0 44% 0);
-      line-height: 1;
-      margin-bottom: -10px;
-      letter-spacing: 0.5px;
       text-decoration: none;
       transition: color 0.3s ease;
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
 
       &:hover {
         color: rgba(255, 255, 255, 0.9);
